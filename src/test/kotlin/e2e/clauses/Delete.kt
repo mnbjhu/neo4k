@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.DetachDelete.Companion.detachDelete
 import uk.gibby.neo4k.clauses.Match.Companion.match
-import uk.gibby.neo4k.core.NodeParamMap.Companion.minus
 import uk.gibby.neo4k.core.invoke
 import uk.gibby.neo4k.paths.`-o-`
 import uk.gibby.neo4k.paths.`o-→`

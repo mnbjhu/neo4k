@@ -5,7 +5,6 @@ import e2e.schemas.UserNode
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.core.invoke
-import uk.gibby.neo4k.returns.graph.entities.Node.Companion.`--`
 import util.GraphTest
 /*
 class Paths: GraphTest() {

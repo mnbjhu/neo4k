@@ -10,18 +10,18 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.Match.Companion.match
-import uk.gibby.neo4k.core.NodeParamMap.Companion.minus
 import uk.gibby.neo4k.core.invoke
+import uk.gibby.neo4k.paths.`o-→`
 import util.GraphTest
 
 class Match: GraphTest() {
     @BeforeEach
     fun setupTestData(){
         graph.query {
-            val (_, _, movie) = create((::Actor{ it[::name] = "Mark Hamill" } - ::ActedIn{ it[::role] = "Luke Skywalker" }) `→`
+            val (_, _, movie) = create(::Actor{ it[::name] = "Mark Hamill" } `o-→` ::ActedIn{ it[::role] = "Luke Skywalker" } `o-→`
                 ::Movie{ it[::title] = "Star Wars: Episode V - The Empire Strikes Back"; it[::releaseYear] = 1980 })
-            create((::Actor{ it[::name] = "Carrie Fisher" } - ::ActedIn{ it[::role] = "Princess Leia" }) `→` movie)
-            create((::Actor{ it[::name] = "Harrison Ford" } -::ActedIn{ it[::role] = "Han Solo" }) `→` movie)
+            create((::Actor{ it[::name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[::role] = "Princess Leia" }) `o-→` movie)
+            create(::Actor{ it[::name] = "Harrison Ford" } `o-→` ::ActedIn{ it[::role] = "Han Solo" } `o-→` movie)
         }
     }
     @Test
@@ -64,7 +64,7 @@ class Match: GraphTest() {
     fun matchPath(){
         graph.query {
             // MATCH (obj10:Actor)-[obj11:ActedIn]->(obj12:Movie)
-            val (_, actedIn, _) = match(::Actor - ::ActedIn `→` ::Movie)
+            val (_, actedIn, _) = match(::Actor `o-→` ::ActedIn `o-→`  ::Movie)
             actedIn.role
         } shouldContainSame listOf(
             "Princess Leia",

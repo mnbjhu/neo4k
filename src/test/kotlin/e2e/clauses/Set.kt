@@ -19,7 +19,7 @@ class Set: GraphTest() {
         graph.query {
             val alice = create(::UserNode{ it[::firstName] = "Alice"; it[::surname] = "Williams"; it[::password] = "Password123"})
             val bob = create(::UserNode{ it[::firstName] = "Bob"; it[::surname] = "Johnson"; it[::password] = "Password123"})
-            create(alice `-o-` ::FriendsWith{it[::related] = false} `-o-`  bob)
+            create(bob `-o-` ::FriendsWith{it[::related] = false} `-o-`  alice)
         }
     }
 

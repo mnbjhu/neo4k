@@ -11,16 +11,17 @@ import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.core.invoke
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
+import uk.gibby.neo4k.paths.`o-→`
 import util.GraphTest
 
 class Where: GraphTest() {
     @BeforeEach
     fun setupTestData(){
         graph.query {
-            val (_, _, movie) = create(::Actor{ it[::name] = "Mark Hamill" } - ::ActedIn{ it[::role] = "Luke Skywalker" } `→`
+            val (_, _, movie) = create(::Actor{ it[::name] = "Mark Hamill" } `o-→` ::ActedIn{ it[::role] = "Luke Skywalker" } `o-→`
                     ::Movie{ it[::title] = "Star Wars: Episode V - The Empire Strikes Back"; it[::releaseYear] = 1980 })
-            create(::Actor{ it[::name] = "Carrie Fisher" } - ::ActedIn{ it[::role] = "Princess Leia" } `→` movie)
-            create(::Actor{ it[::name] = "Harrison Ford" } - ::ActedIn{ it[::role] = "Han Solo" } `→` movie)
+            create(::Actor{ it[::name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[::role] = "Princess Leia" } `o-→` movie)
+            create(::Actor{ it[::name] = "Harrison Ford" } `o-→` ::ActedIn{ it[::role] = "Han Solo" } `o-→` movie)
         }
     }
     @Test

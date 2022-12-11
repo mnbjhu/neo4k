@@ -17,7 +17,7 @@ import kotlin.reflect.KFunction
  * @constructor Creates a 'CREATE' claus
  */
 class Match(private vararg val matchable: Matchable<*>): Claus(){
-    override fun getString() = "MATCH ${matchable.joinToString { it.getSearchString() }}"
+    override fun getString() = "MATCH ${matchable.joinToString { it.getMatchString() }}"
     companion object{
 
         /**

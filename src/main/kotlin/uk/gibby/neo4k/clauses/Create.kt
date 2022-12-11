@@ -15,7 +15,7 @@ import uk.gibby.neo4k.core.QueryScope
  * @constructor Creates a 'CREATE' claus
  */
 class Create(private vararg val creatable: Creatable<*>): Claus(){
-    override fun getString() = "CREATE ${creatable.joinToString { it.getSearchString() }}"
+    override fun getString() = "CREATE ${creatable.joinToString { it.getCreateString() }}"
     companion object{
         /**
          * Create

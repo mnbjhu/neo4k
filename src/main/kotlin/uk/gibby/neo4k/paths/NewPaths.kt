@@ -130,10 +130,15 @@ class NeoMatchablePath2<A: Node<*>, B: Relationship<*, *, *>, C: Node<*>>(
     val second: Searchable<C>,
     override val ref: String
 ): Matchable<NeoPath2<A, B, C>>, Creatable<NeoPath2<A, B, C>> {
+    override fun getCreateString(): String {
+        return "${first.getSearchString()}${if (firstToSecondDir == PathDirection.Backwards) "<-" else "-"}${firstToSecond.getMatchString()}${if (firstToSecondDir != PathDirection.Backwards) "->" else "-"}${second.getSearchString()}"
+    }
+
     override fun getReference(): NeoPath2<A, B, C> {
         return NeoPath2(first.getReference(), firstToSecond.getReference(), second.getReference())
     }
-    override fun getSearchString(): String {
+
+    override fun getMatchString(): String {
         return "${first.getSearchString()}${if (firstToSecondDir == PathDirection.Backwards) "<-" else "-"}${firstToSecond.getMatchString()}${if (firstToSecondDir == PathDirection.Forwards) "->" else "-"}${second.getSearchString()}"
     }
 }

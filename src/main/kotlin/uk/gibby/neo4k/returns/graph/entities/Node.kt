@@ -4,7 +4,6 @@ import org.neo4j.driver.internal.value.NodeValue
 import uk.gibby.neo4k.core.RelationParamMap
 import uk.gibby.neo4k.core.Searchable
 import uk.gibby.neo4k.core.invoke
-import uk.gibby.neo4k.paths.open.OpenPath2
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.NodeReference
 import uk.gibby.neo4k.returns.util.ReturnScope
@@ -21,12 +20,5 @@ abstract class Node<T>: Entity<T>(){
             .filter { it.returnType.isSubtypeOf(ReturnValue::class.createType(listOf(KTypeProjection.STAR))) }
             .associate { it.name to nodeData[it.name].asObject() }
         return ReturnScope(map).decode()
-    }
-    companion object{
-        inline infix fun <reified A: Node<*>, reified B: DirectionalRelationship<A, C, *>, C: Node<*>>A.`--`(relation: RelationParamMap<B>) =
-            OpenPath2(NodeReference(this), relation)
-
-        inline infix fun <reified A: Node<*>, reified B: DirectionalRelationship<A, C, *>, C: Node<*>>A.`--`(relation: KFunction<B>): OpenPath2<A, B, C> =
-            this.`--`(relation{})
     }
 }
