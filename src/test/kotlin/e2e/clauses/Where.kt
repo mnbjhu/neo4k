@@ -18,10 +18,10 @@ class Where: GraphTest() {
     @BeforeEach
     fun setupTestData(){
         graph.query {
-            val (_, _, movie) = create(::Actor{ it[::name] = "Mark Hamill" } `o-→` ::ActedIn{ it[::role] = "Luke Skywalker" } `o-→`
-                    ::Movie{ it[::title] = "Star Wars: Episode V - The Empire Strikes Back"; it[::releaseYear] = 1980 })
-            create(::Actor{ it[::name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[::role] = "Princess Leia" } `o-→` movie)
-            create(::Actor{ it[::name] = "Harrison Ford" } `o-→` ::ActedIn{ it[::role] = "Han Solo" } `o-→` movie)
+            val (_, _, movie) = create(::Actor{ it[name] = "Mark Hamill" } `o-→` ::ActedIn{ it[role] = "Luke Skywalker" } `o-→`
+                    ::Movie{ it[title] = "Star Wars: Episode V - The Empire Strikes Back"; it[releaseYear] = 1980 })
+            create(::Actor{ it[name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[role] = "Princess Leia" } `o-→` movie)
+            create(::Actor{ it[name] = "Harrison Ford" } `o-→` ::ActedIn{ it[role] = "Han Solo" } `o-→` movie)
         }
     }
     @Test

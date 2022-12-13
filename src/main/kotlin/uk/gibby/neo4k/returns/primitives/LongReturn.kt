@@ -1,6 +1,8 @@
 package uk.gibby.neo4k.returns.primitives
 
 import org.neo4j.driver.internal.value.IntegerValue
+import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.util.ReturnValueType
 import java.lang.ClassCastException
 
 
@@ -22,4 +24,10 @@ class LongReturn(value: Long?): PrimitiveReturn<Long>(value) {
         } catch (_: ClassCastException){}
         return (value as IntegerValue).asLong()
     }
+
+    override fun createReference(newRef: String): LongReturn{
+        return LongReturn(null).apply { type = ReturnValueType.Reference(newRef) }
+    }
+    override fun createDummy() = LongReturn(null).apply { type = ReturnValueType.ParserOnly }
+
 }

@@ -2,6 +2,8 @@ package uk.gibby.neo4k.returns.primitives
 
 import org.neo4j.driver.internal.value.BooleanValue
 import org.neo4j.driver.internal.value.FloatValue
+import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.util.ReturnValueType
 import java.lang.ClassCastException
 import kotlin.reflect.jvm.internal.impl.resolve.constants.DoubleValue
 
@@ -22,4 +24,9 @@ class DoubleReturn(value: Double?): PrimitiveReturn<Double>(value) {
         try { return super.parse(value) } catch (_: ClassCastException){}
         return (value as FloatValue).asDouble()
     }
+    override fun createReference(newRef: String): DoubleReturn {
+        return DoubleReturn(null).apply { type = ReturnValueType.Reference(newRef) }
+    }
+
+    override fun createDummy() = DoubleReturn(null).apply { type = ReturnValueType.ParserOnly }
 }

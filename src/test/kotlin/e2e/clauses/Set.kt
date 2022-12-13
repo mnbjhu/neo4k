@@ -17,16 +17,16 @@ class Set: GraphTest() {
     @BeforeEach
     fun setup(){
         graph.query {
-            val alice = create(::UserNode{ it[::firstName] = "Alice"; it[::surname] = "Williams"; it[::password] = "Password123"})
-            val bob = create(::UserNode{ it[::firstName] = "Bob"; it[::surname] = "Johnson"; it[::password] = "Password123"})
-            create(bob `-o-` ::FriendsWith{it[::related] = false} `-o-`  alice)
+            val alice = create(::UserNode{ it[firstName] = "Alice"; it[surname] = "Williams"; it[password] = "Password123"})
+            val bob = create(::UserNode{ it[firstName] = "Bob"; it[surname] = "Johnson"; it[password] = "Password123"})
+            create(bob `-o-` ::FriendsWith `-o-`  alice)
         }
     }
 
     @Test
     fun setNodeValue(){
         graph.query {
-            val alice = match(::UserNode{it[::firstName] = "Alice"})
+            val alice = match(::UserNode{it[firstName] = "Alice"})
             set { alice.password to "Password123!" }
             alice.password
         } `should be equal to` listOf("Password123!")
@@ -35,18 +35,10 @@ class Set: GraphTest() {
     @Test
     fun setNodeValueToReference(){
         graph.query {
-            val (alice, bob) = match(::UserNode{it[::firstName] = "Alice"}, ::UserNode{it[::firstName] = "Bob"})
+            val (alice, bob) = match(::UserNode{it[firstName] = "Alice"}, ::UserNode{it[firstName] = "Bob"})
             set { alice.surname to bob.surname }
             alice.surname
         } `should be equal to` listOf("Johnson")
     }
 
-    @Test
-    fun setRelationValue(){
-        graph.query {
-            val (_, friendsWith, _) = match(::UserNode{it[::firstName] = "Alice"} `-o-` ::FriendsWith `-o-` ::UserNode{it[::firstName] = "Bob"})
-            set { friendsWith.related to true }
-            friendsWith.related
-        } `should be equal to` listOf(true)
-    }
 }

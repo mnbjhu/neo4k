@@ -18,63 +18,81 @@ import kotlin.reflect.KFunction
  */
 
 
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>NodeParamMap<A>.`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B> {
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>NodeParamMap<A>
+        .`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B> {
     return NoDirOpenPath2(this, relation)
 }
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>KFunction<A>.`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B>{
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>KFunction<A>
+        .`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B>{
     return NoDirOpenPath2(this{}, relation)
 }
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>NodeParamMap<A>.`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B> {
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>NodeParamMap<A>
+        .`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B> {
     return NoDirOpenPath2(this, relation{})
 }
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>KFunction<A>.`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B>{
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>KFunction<A>
+        .`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B>{
     return NoDirOpenPath2(this{}, relation{})
 }
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>A.`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B> {
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>A
+        .`-o-`(relation: KFunction<B>): NoDirOpenPath2<A, B> {
     return NoDirOpenPath2(NodeReference(this), relation{})
 }
-infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>A.`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B>{
+infix fun <A: Node<*>, B: NonDirectionalRelationship<A, *>>A
+        .`-o-`(relation: RelationParamMap<B>): NoDirOpenPath2<A, B>{
     return NoDirOpenPath2(NodeReference(this), relation)
 }
 
 
 
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<C>.`←-o`(relation: RelationParamMap<B>): BackwardsOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<C>
+        .`←-o`(relation: RelationParamMap<B>): BackwardsOpenPath2<A, B, C> {
     return BackwardsOpenPath2(this, relation)
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<C>.`←-o`(relation: RelationParamMap<B>):BackwardsOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<C>
+        .`←-o`(relation: RelationParamMap<B>):BackwardsOpenPath2<A, B, C>{
     return BackwardsOpenPath2(this{}, relation)
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<C>.`←-o`(relation: KFunction<B>): BackwardsOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<C>
+        .`←-o`(relation: KFunction<B>): BackwardsOpenPath2<A, B, C> {
     return BackwardsOpenPath2(this, relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<C>.`←-o`(relation: KFunction<B>):BackwardsOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<C>
+        .`←-o`(relation: KFunction<B>):BackwardsOpenPath2<A, B, C>{
     return BackwardsOpenPath2(this{}, relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>C.`←-o`(relation: KFunction<B>): BackwardsOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>C
+        .`←-o`(relation: KFunction<B>): BackwardsOpenPath2<A, B, C> {
     return BackwardsOpenPath2(NodeReference(this), relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>C.`←-o`(relation: RelationParamMap<B>): BackwardsOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>C
+        .`←-o`(relation: RelationParamMap<B>): BackwardsOpenPath2<A, B, C>{
     return BackwardsOpenPath2(NodeReference(this), relation)
 }
 
 
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<A>.`o-→`(relation: RelationParamMap<B>): ForwardOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<A>
+        .`o-→`(relation: RelationParamMap<B>): ForwardOpenPath2<A, B, C> {
     return ForwardOpenPath2(this, relation)
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<A>.`o-→`(relation: RelationParamMap<B>):ForwardOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<A>
+        .`o-→`(relation: RelationParamMap<B>):ForwardOpenPath2<A, B, C>{
     return ForwardOpenPath2(this{}, relation)
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<A>.`o-→`(relation: KFunction<B>): ForwardOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>NodeParamMap<A>
+        .`o-→`(relation: KFunction<B>): ForwardOpenPath2<A, B, C> {
     return ForwardOpenPath2(this, relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<A>.`o-→`(relation: KFunction<B>):ForwardOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>KFunction<A>
+        .`o-→`(relation: KFunction<B>):ForwardOpenPath2<A, B, C>{
     return ForwardOpenPath2(this{}, relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>A.`o-→`(relation: KFunction<B>): ForwardOpenPath2<A, B, C> {
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>A
+        .`o-→`(relation: KFunction<B>): ForwardOpenPath2<A, B, C> {
     return ForwardOpenPath2(NodeReference(this), relation{})
 }
-infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>A.`o-→`(relation: RelationParamMap<B>): ForwardOpenPath2<A, B, C>{
+infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>A
+        .`o-→`(relation: RelationParamMap<B>): ForwardOpenPath2<A, B, C>{
     return ForwardOpenPath2(NodeReference(this), relation)
 }
 
@@ -115,7 +133,7 @@ infix fun <A: Node<*>, B: DirectionalRelationship<A, C, *>, C: Node<*>>Backwards
 
 //`←-o`
 
-data class NeoPath2<A: ReturnValue<*>, B: ReturnValue<*>, C: ReturnValue<*>>(val first: A, val firstToSecond: B, val second: C): EmptyReturn()
+data class NeoPath2<A: ReturnValue<*>, B: ReturnValue<*>, C: ReturnValue<*>>(val first: A, val firstToSecond: B, val second: C, val ref: String): EmptyReturn()
 
 class NoDirOpenPath2<A: Node<*>, B: NonDirectionalRelationship<A, *>>(val first: Searchable<A>, val firstToSecond: RelationParamMap<B>)
 
@@ -135,7 +153,7 @@ class NeoMatchablePath2<A: Node<*>, B: Relationship<*, *, *>, C: Node<*>>(
     }
 
     override fun getReference(): NeoPath2<A, B, C> {
-        return NeoPath2(first.getReference(), firstToSecond.getReference(), second.getReference())
+        return NeoPath2(first.getReference(), firstToSecond.getReference(), second.getReference(), ref)
     }
 
     override fun getMatchString(): String {

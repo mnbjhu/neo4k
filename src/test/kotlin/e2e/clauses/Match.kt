@@ -18,10 +18,10 @@ class Match: GraphTest() {
     @BeforeEach
     fun setupTestData(){
         graph.query {
-            val (_, _, movie) = create(::Actor{ it[::name] = "Mark Hamill" } `o-→` ::ActedIn{ it[::role] = "Luke Skywalker" } `o-→`
-                ::Movie{ it[::title] = "Star Wars: Episode V - The Empire Strikes Back"; it[::releaseYear] = 1980 })
-            create((::Actor{ it[::name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[::role] = "Princess Leia" }) `o-→` movie)
-            create(::Actor{ it[::name] = "Harrison Ford" } `o-→` ::ActedIn{ it[::role] = "Han Solo" } `o-→` movie)
+            val (_, _, movie) = create(::Actor{ it[name] = "Mark Hamill" } `o-→` ::ActedIn{ it[role] = "Luke Skywalker" } `o-→`
+                ::Movie{ it[title] = "Star Wars: Episode V - The Empire Strikes Back"; it[releaseYear] = 1980 })
+            create((::Actor{ it[name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[role] = "Princess Leia" }) `o-→` movie)
+            create(::Actor{ it[name] = "Harrison Ford" } `o-→` ::ActedIn{ it[role] = "Han Solo" } `o-→` movie)
         }
     }
     @Test
@@ -36,7 +36,7 @@ class Match: GraphTest() {
     fun matchOneNodeFiltered(){
         // MATCH (obj10:Actor{name:'Mark Hamill'})
         graph.query {
-            val actor = match(::Actor{it[::name] = "Mark Hamill"})
+            val actor = match(::Actor{it[name] = "Mark Hamill"})
             actor.name
         } shouldHaveSize 1
     }
@@ -45,8 +45,8 @@ class Match: GraphTest() {
         // MATCH (obj10:Actor{name:'Mark Hamill'})
         graph.query {
             val (actor, _) = match(
-                ::Actor{it[::name] = "Mark Hamill"},
-                ::Movie{it[::title] = "Star Wars: Episode V - The Empire Strikes Back"}
+                ::Actor{it[name] = "Mark Hamill"},
+                ::Movie{it[title] = "Star Wars: Episode V - The Empire Strikes Back"}
             )
             actor.name
         } shouldHaveSize 1

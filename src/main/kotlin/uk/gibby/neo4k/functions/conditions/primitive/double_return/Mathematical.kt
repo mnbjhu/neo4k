@@ -1,6 +1,7 @@
 package uk.gibby.neo4k.functions.conditions.primitive.double_return
 
 import uk.gibby.neo4k.returns.ReturnValue.Companion.createReference
+import uk.gibby.neo4k.returns.primitives.BooleanReturn
 import uk.gibby.neo4k.returns.primitives.DoubleReturn
 
 operator fun DoubleReturn.plus(other: DoubleReturn) = createReference(::DoubleReturn, "(${getString()} + ${other.getString()})")
@@ -26,3 +27,11 @@ operator fun Double.rem(other: DoubleReturn) = createReference(::DoubleReturn, "
 fun DoubleReturn.pow(other: DoubleReturn) = createReference(::DoubleReturn, "(${getString()} ^ ${other.getString()})")
 fun DoubleReturn.pow(other: Double) = createReference(::DoubleReturn, "(${getString()} ^ $other)")
 fun Double.pow(other: DoubleReturn) = createReference(::DoubleReturn, "($this ^ ${other.getString()})")
+
+infix fun DoubleReturn.greaterThan(other: DoubleReturn) = createReference(::BooleanReturn, "(${getString()} > ${other.getString()})")
+infix fun DoubleReturn.greaterThan(other: Double) = createReference(::BooleanReturn, "(${getString()} > $other)")
+infix fun Double.greaterThan(other: DoubleReturn) = createReference(::BooleanReturn, "($this > ${other.getString()})")
+
+infix fun DoubleReturn.lessThan(other: DoubleReturn) = createReference(::BooleanReturn, "(${getString()} < ${other.getString()})")
+infix fun DoubleReturn.lessThan(other: Double) = createReference(::BooleanReturn, "(${getString()} < $other)")
+infix fun Double.lessThan(other: DoubleReturn) = createReference(::BooleanReturn, "($this < ${other.getString()})")

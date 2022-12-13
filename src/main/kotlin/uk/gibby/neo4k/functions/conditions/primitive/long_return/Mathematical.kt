@@ -1,8 +1,18 @@
 package uk.gibby.neo4k.functions.conditions.primitive.long_return
 
 import uk.gibby.neo4k.returns.ReturnValue.Companion.createReference
+import uk.gibby.neo4k.returns.primitives.BooleanReturn
+import uk.gibby.neo4k.returns.primitives.DoubleReturn
 import uk.gibby.neo4k.returns.primitives.LongReturn
 
+
+infix fun LongReturn.greaterThan(other: LongReturn) = createReference(::BooleanReturn, "(${getString()} > ${other.getString()})")
+infix fun LongReturn.greaterThan(other: Long) = createReference(::BooleanReturn, "(${getString()} > $other)")
+infix fun Long.greaterThan(other: LongReturn) = createReference(::BooleanReturn, "($this > ${other.getString()})")
+
+infix fun LongReturn.lessThan(other: LongReturn) = createReference(::BooleanReturn, "(${getString()} < ${other.getString()})")
+infix fun LongReturn.lessThan(other: Long) = createReference(::BooleanReturn, "(${getString()} < $other)")
+infix fun Long.lessThan(other: LongReturn) = createReference(::BooleanReturn, "($this < ${other.getString()})")
 operator fun LongReturn.plus(other: LongReturn) = createReference(::LongReturn, "(${getString()} + ${other.getString()})")
 operator fun LongReturn.plus(other: Long) = createReference(::LongReturn, "(${getString()} + $other)")
 operator fun Long.plus(other: LongReturn) = createReference(::LongReturn, "($this + ${other.getString()})")

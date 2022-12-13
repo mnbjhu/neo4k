@@ -20,4 +20,4 @@ class UserNode(
 }
 
 data class User(val firstName: String, val surname: String, val password: String)
-class FriendsWith(val related: BooleanReturn): UnitNonDirectionalRelationship<UserNode>()
+class FriendsWith: UnitNonDirectionalRelationship<UserNode>()

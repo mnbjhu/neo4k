@@ -1,7 +1,7 @@
 package uk.gibby.neo4k.core
 
 import org.neo4j.driver.*
-import org.neo4j.driver.Values.parameters
+import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.empty.EmptyReturn
 
@@ -36,19 +36,24 @@ class Graph(
     fun <T>query(queryBuilder: QueryScope.() -> ReturnValue<T>): List<T>{
         val scope = QueryScope()
         val result = scope.queryBuilder()
-        val builtQuery = scope.getString()
-        return if(result is EmptyReturn){
-            client.session(SessionConfig.forDatabase(name)).executeWrite{
-                val query = Query(builtQuery)
-                it.run(query)
+        val queryStart = scope.getString()
+        val queryEnd = scope.getAfterString()
+        return when(result){
+            is EmptyReturn -> {
+                client.session(SessionConfig.forDatabase(name)).executeWrite {
+                    val query = Query("$queryStart $queryEnd")
+                    it.run(query)
+                }
+                emptyList()
             }
-            emptyList()
-        } else {
-            client.session(SessionConfig.forDatabase(name)).executeWrite{
-                val query = Query("$builtQuery RETURN ${result.getString()}")
-                it.run(query).list { result.parse(it.values().first()) }
+            else -> {
+                client.session(SessionConfig.forDatabase(name)).executeWrite{
+                    val query = Query("$queryStart RETURN ${result.getString()} $queryEnd".also { println(it) })
+                    if(result is MultipleReturn) it.run(query).list { result.parse(it.values()) }
+                        else { it.run(query).list { result.parse(it.values().first()) } }
+                }
             }
-        }
+    }
     }/*
     fun <T, U: ReturnValue<T>>queryUnion(vararg queries: QueryScope.() -> U): List<T>{
         var result: U? = null

@@ -19,9 +19,9 @@ class OpenNodes: GraphTest() {
     @Test
     fun create(){
         graph.query {
-            create(::Dog{ it[::name] = "Scooby Doo"; it[::breed] = "Great Dane" })
-            create(::Dog{ it[::name] = "Santa's Little Helper"; it[::breed] = "Greyhound" })
-            create(::Fish{ it[::name] = "Nemo"; it[::waterType] = "Saltwater" })
+            create(::Dog{ it[name] = "Scooby Doo"; it[breed] = "Great Dane" })
+            create(::Dog{ it[name] = "Santa's Little Helper"; it[breed] = "Greyhound" })
+            create(::Fish{ it[name] = "Nemo"; it[waterType] = "Saltwater" })
         }
     }
     @Test

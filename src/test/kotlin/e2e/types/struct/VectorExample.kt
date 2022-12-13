@@ -40,7 +40,7 @@ class VectorExample: GraphTest() {
     @Test
     fun createAttribute(){
         graph.query {
-            val newNode = create(::Vector2Node{ it[::innerVector] = Vector2(1, 2) })
+            val newNode = create(::Vector2Node{ it[innerVector] = Vector2(1, 2) })
             newNode.innerVector
         } `should be equal to` listOf(Vector2(1, 2))
     }
@@ -49,7 +49,7 @@ class VectorExample: GraphTest() {
     fun matchAttribute(){
         createAttribute()
         graph.query {
-            val newNode = match(::Vector2Node{ it[::innerVector] = Vector2(1, 2) })
+            val newNode = match(::Vector2Node{ it[innerVector] = Vector2(1, 2) })
             newNode.innerVector
         } `should be equal to` listOf(Vector2(1, 2))
     }

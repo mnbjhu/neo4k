@@ -73,8 +73,8 @@ class CreateReferenceTest {
         with(QueryScope()){
             val first = createReference(::TestNode, "some_ref")
             val (node) = match(first `o-→` ::HasOther `o-→` first)
-            val node2 = create(::TestNode{ it[::myString] = "some string" })
-            create(node2 `o-→` ::HasOther `o-→` ::TestNode{ it[::myString] = "other string" })
+            val node2 = create(::TestNode{ it[myString] = "some string" })
+            create(node2 `o-→` ::HasOther `o-→` ::TestNode{ it[myString] = "other string" })
 
             delete(node, node2)
             set {

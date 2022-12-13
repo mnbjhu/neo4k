@@ -14,4 +14,7 @@ abstract class EmptyReturn: ReturnValue<Unit>() {
     override fun encode(value: Unit): ReturnValue<Unit> {
         throw Exception("Return is empty")
     }
+
+    override fun createReference(newRef: String) = throw NotImplementedError()
+    override fun createDummy() = throw NotImplementedError()
 }

@@ -1,12 +1,29 @@
 package e2e.functions
 
+import Movie
+import Rated
+import User
+import e2e.Animal
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import uk.gibby.neo4k.clauses.Limit.Companion.limit
+import uk.gibby.neo4k.clauses.Match.Companion.match
+import uk.gibby.neo4k.clauses.OrderBy.Companion.orderBy
+import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
+import uk.gibby.neo4k.clauses.Unwind.Companion.unwind
+import uk.gibby.neo4k.clauses.Where.Companion.where
+import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.array
 import uk.gibby.neo4k.core.of
 import uk.gibby.neo4k.functions.conditions.primitive.array_return.range
+import uk.gibby.neo4k.functions.conditions.primitive.eq
+import uk.gibby.neo4k.functions.conditions.primitive.long_return.avg
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.times
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
+import uk.gibby.neo4k.paths.`o-→`
+import uk.gibby.neo4k.paths.`←-o`
+import uk.gibby.neo4k.returns.MultipleReturn2
+import uk.gibby.neo4k.returns.generic.toList
 import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
 
@@ -80,4 +97,5 @@ class ArrayFunctionsTest: GraphTest() {
             )
         )
     }
+
 }

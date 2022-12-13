@@ -27,7 +27,7 @@ class Long: GraphTest() {
     @Test
     fun createAttribute(){
         graph.query {
-            val newNode = create(::LongNode{ it[::innerLong] = 23 })
+            val newNode = create(::LongNode{ it[innerLong] = 23 })
             newNode.innerLong
         } `should be equal to` listOf(23)
     }
@@ -36,7 +36,7 @@ class Long: GraphTest() {
     fun matchAttribute(){
         createAttribute()
         graph.query {
-            val newNode = match(::LongNode{ it[::innerLong] = 23 })
+            val newNode = match(::LongNode{ it[innerLong] = 23 })
             newNode.innerLong
         } `should be equal to` listOf(23)
     }

@@ -13,9 +13,9 @@ class UserExample: GraphTest() {
     fun returnNodeRef(){
         graph.query {
             create(::UserNode{
-                it[::firstName] = "Test"
-                it[::surname] = "User"
-                it[::password] = "Password123"
+                it[firstName] = "Test"
+                it[surname] = "User"
+                it[password] = "Password123"
             })
         } `should be equal to` listOf(User("Test", "User", "Password123"))
     }

@@ -1,6 +1,7 @@
 package uk.gibby.neo4k.returns.primitives
 
 import org.neo4j.driver.internal.value.StringValue
+import uk.gibby.neo4k.returns.util.ReturnValueType
 import java.lang.ClassCastException
 import kotlin.reflect.jvm.internal.impl.resolve.constants.LongValue
 
@@ -23,4 +24,9 @@ class StringReturn(value: String?): PrimitiveReturn<String>(value) {
         try { return super.parse(value) } catch (_: ClassCastException){}
         return (value as StringValue).asString()
     }
+    override fun createReference(newRef: String): StringReturn{
+        return StringReturn(null).apply { type = ReturnValueType.Reference(newRef) }
+    }
+    override fun createDummy() = StringReturn(null).apply { type = ReturnValueType.ParserOnly }
+
 }

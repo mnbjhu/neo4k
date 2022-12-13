@@ -9,3 +9,4 @@ fun min(number: DoubleReturn) = ReturnValue.createReference(::DoubleReturn, "min
 
 fun max(number: DoubleReturn) = ReturnValue.createReference(::DoubleReturn, "max(${number.getString()})")
 
+fun sum(number: DoubleReturn) = ReturnValue.createReference(::DoubleReturn, "sum(${number.getString()})")

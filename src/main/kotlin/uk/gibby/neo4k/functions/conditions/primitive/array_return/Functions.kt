@@ -15,7 +15,7 @@ private val intArrayType = ArrayReturn::class.createType(listOf(
 
 fun <U: ArrayReturn<*, *>>isEmpty(array: U) = ReturnValue.createReference(::BooleanReturn, "isEmpty(${array.getString()})")
 
-fun <U: ArrayReturn<*, *>>reverse(original: U) = ReturnValue.createReference(original.inner, "reverse(${original.getString()})") as U
+fun <U: ArrayReturn<*, *>>reverse(original: U) = original.createReference("reverse(${original.getString()})") as U
 
 fun range(start: LongReturn, end: LongReturn, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},${end.getString()},${step})") as ArrayReturn<Long, LongReturn>
 fun range(start: LongReturn, end: Long, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},$end,$step)") as ArrayReturn<Long, LongReturn>

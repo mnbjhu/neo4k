@@ -6,7 +6,7 @@ import uk.gibby.neo4k.returns.primitives.LongReturn
 
 fun count(item: ReturnValue<*>) = ReturnValue.createReference(::LongReturn, "count(${item.getString()})")
 
-fun avg(number: LongReturn) = ReturnValue.createReference(::DoubleReturn, "avg(${number.getString()})")
+fun avg(number: DoubleReturn) = ReturnValue.createReference(::DoubleReturn, "avg(${number.getString()})")
 
 fun min(number: LongReturn) = ReturnValue.createReference(::LongReturn, "min(${number.getString()})")
 

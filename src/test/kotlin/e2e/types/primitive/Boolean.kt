@@ -27,7 +27,7 @@ class Boolean: GraphTest() {
     @Test
     fun createAttribute(){
         graph.query {
-            val newNode = create(::BooleanNode{ it[::innerBoolean] = false })
+            val newNode = create(::BooleanNode{ it[innerBoolean] = false })
             newNode.innerBoolean
         } `should be equal to` listOf(false)
     }
@@ -36,7 +36,7 @@ class Boolean: GraphTest() {
     fun matchAttribute(){
         createAttribute()
         graph.query {
-            val newNode = match(::BooleanNode{ it[::innerBoolean] = false })
+            val newNode = match(::BooleanNode{ it[innerBoolean] = false })
             newNode.innerBoolean
         } `should be equal to` listOf(false)
     }

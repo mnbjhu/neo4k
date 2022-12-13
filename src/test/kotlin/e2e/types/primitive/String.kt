@@ -26,7 +26,7 @@ class String: GraphTest() {
     @Test
     fun createAttribute(){
         graph.query {
-            val newNode = create(::StringNode{ it[::innerString] = "Test Attr" })
+            val newNode = create(::StringNode{ it[innerString] = "Test Attr" })
             newNode.innerString
         } `should be equal to` listOf("Test Attr")
     }
@@ -35,7 +35,7 @@ class String: GraphTest() {
     fun matchAttribute(){
         createAttribute()
         graph.query {
-            val newNode = match(::StringNode{ it[::innerString] = "Test Attr" })
+            val newNode = match(::StringNode{ it[innerString] = "Test Attr" })
             newNode.innerString
         } `should be equal to` listOf("Test Attr")
     }

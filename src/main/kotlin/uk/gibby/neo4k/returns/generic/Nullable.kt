@@ -5,7 +5,12 @@ import org.neo4j.driver.internal.value.NullValue
 import uk.gibby.neo4k.returns.NotNull
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.Box
+import uk.gibby.neo4k.returns.util.ReturnValueType
 import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.withNullability
 
 /**
  * Nullable return
@@ -15,8 +20,8 @@ import kotlin.reflect.KType
  * @sample [e2e.types.primitive.String.createNullLiteral]
  * @sample [e2e.types.Array.createNullLiteral]
  */
-class Nullable<T, U: NotNull<T>>(private val value: Box<U>, private val inner: KType): ReturnValue<T?>() {
-    private val dummy = createDummy(inner) as U
+class Nullable<T, U: NotNull<T>>(private val value: Box<U>, private val dummy: U): ReturnValue<T?>() {
+
     override fun getStructuredString() = when(value){
         is Box.WithoutValue -> "NULL"
         is Box.WithValue -> value.value.getString()
@@ -26,8 +31,14 @@ class Nullable<T, U: NotNull<T>>(private val value: Box<U>, private val inner: K
         return if (value != null && value !is NullValue) dummy.parse(value)
         else null
     }
+    override fun createReference(newRef: String): Nullable<T, U>{
+        return Nullable(Box.WithoutValue, dummy).also { type = ReturnValueType.Reference(newRef) }
+    }
+
+    override fun createDummy() = Nullable(Box.WithoutValue, dummy).apply { type = ReturnValueType.ParserOnly }
+
     override fun encode(value: T?): Nullable<T, U> {
-        return if (value == null) Nullable(Box.WithoutValue, inner)
-        else Nullable(Box.WithValue(dummy.encode(value) as U), inner)
+        return if (value == null) Nullable(Box.WithoutValue, dummy)
+        else Nullable(Box.WithValue(dummy.encode(value) as U), dummy)
     }
 }

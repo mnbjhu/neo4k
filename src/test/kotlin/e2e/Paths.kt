@@ -25,4 +25,15 @@ class Paths: GraphTest() {
 }
 
 
+
+class Paths : GraphTest(){
+    @Test
+    fun createPath3(){
+        graph.query {
+            create(::UserNode{ it[firstName] = "" })
+        }
+
+    }
+}
+
  */

@@ -17,7 +17,8 @@ class ArrayFunctionsTest: GraphTest() {
     class ArrayNode(val innerArray: ArrayReturn<String, StringReturn>): UnitNode()
     @Test
     fun createLiteral(){
-        graph.query { array(::StringReturn) of listOf("Test1", "Test2", "Test3") } `should be equal to`
+        val arrayType = array(::StringReturn)
+        graph.query { arrayType of listOf("Test1", "Test2", "Test3") } `should be equal to`
                 listOf(listOf("Test1", "Test2", "Test3"))
     }
 
@@ -34,7 +35,7 @@ class ArrayFunctionsTest: GraphTest() {
     @Test
     fun createAttribute(){
         graph.query {
-            val newNode = create(::ArrayNode{ it[::innerArray] = listOf("Test1", "Test2", "Test3") })
+            val newNode = create(::ArrayNode{ it[innerArray] = listOf("Test1", "Test2", "Test3") })
             newNode.innerArray
         } `should be equal to` listOf(listOf("Test1", "Test2", "Test3"))
     }
@@ -43,7 +44,7 @@ class ArrayFunctionsTest: GraphTest() {
     fun matchAttribute(){
         createAttribute()
         graph.query {
-            val newNode = match(::ArrayNode{ it[::innerArray] = listOf("Test1", "Test2", "Test3") })
+            val newNode = match(::ArrayNode{ it[innerArray] = listOf("Test1", "Test2", "Test3") })
             newNode.innerArray
         } `should be equal to` listOf(listOf("Test1", "Test2", "Test3"))
     }

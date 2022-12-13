@@ -14,7 +14,7 @@ class NodeParamMap<U: Node<*>>(
     override val ref: String = NameCounter.next()
 ): ParamMap<U>(refType), Searchable<U> {
     override fun getSearchString(): String {
-        val paramString = if(entries.isEmpty()) "" else "{${entries.joinToString { "${it.first}:${it.second.getString()}" }}}"
+        val paramString = if(entries.isEmpty()) "" else "{${entries.joinToString { "${it.first}:${it.second}" }}}"
         val labels = listOf(type.classifier as KClass<*>) + (type.classifier as KClass<*>).superclasses
             .takeWhile { it != Node::class && it != UnitNode::class }
         return "($ref:${labels.joinToString(":"){ it.simpleName!! }}$paramString)"

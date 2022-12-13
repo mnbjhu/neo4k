@@ -9,6 +9,7 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
 
 abstract class StructReturn<T>: DataType<T>(){
     override fun getStructuredString(): String {
@@ -32,6 +33,10 @@ abstract class StructReturn<T>: DataType<T>(){
     operator fun <T, U: ReturnValue<T>>U.get(value: T): U{
         return encode(value) as U
     }
+
+
+    override fun createReference(newRef: String) = Companion.createReference(this::class.createType(), newRef) as StructReturn<T>
+    override fun createDummy() = createDummy(this::class.createType()) as StructReturn<T>
 }
 
 

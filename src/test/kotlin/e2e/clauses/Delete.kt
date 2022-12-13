@@ -18,19 +18,19 @@ class Delete: GraphTest() {
     @BeforeEach
     fun setup(){
         graph.query {
-            val alice = create(::UserNode{ it[::firstName] = "Alice"; it[::surname] = "Williams"; it[::password] = "Password123"})
-            val bob = create(::UserNode{ it[::firstName] = "Bob"; it[::surname] = "Johnson"; it[::password] = "Password123"})
-            create(alice `-o-` ::FriendsWith{ it[::related] = false } `-o-` bob)
+            val alice = create(::UserNode{ it[firstName] = "Alice"; it[surname] = "Williams"; it[password] = "Password123"})
+            val bob = create(::UserNode{ it[firstName] = "Bob"; it[surname] = "Johnson"; it[password] = "Password123"})
+            create(alice `-o-` ::FriendsWith `-o-` bob)
         }
     }
 
     @Test
     fun deleteNode(){
         graph.query {
-            val bob = match(::UserNode{it[::firstName] = "Bob"})
+            val bob = match(::UserNode{it[firstName] = "Bob"})
             detachDelete(bob)
         }
-        graph.query { match(::UserNode{it[::firstName] = "Bob"}) }`should be equal to` listOf()
+        graph.query { match(::UserNode{it[firstName] = "Bob"}) }`should be equal to` listOf()
     }
     @Test
     fun deleteRelation(){
