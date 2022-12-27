@@ -23,7 +23,7 @@ class Graph(
     port: Int = 7687,
     password: String? = null
 ) {
-    private val client = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
+    internal val client = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
         .apply { session().executeWrite{ it.run("CREATE DATABASE $name IF NOT EXISTS") } }
 
     /**
