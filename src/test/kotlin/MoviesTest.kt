@@ -1,4 +1,6 @@
 import org.junit.jupiter.api.Test
+import org.neo4j.driver.AuthTokens
+import org.neo4j.driver.GraphDatabase
 import uk.gibby.neo4k.clauses.Limit.Companion.limit
 import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
@@ -26,7 +28,10 @@ import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
 
 class MoviesTest {
-    val graph = Graph("neo4j", "bolt://localhost", 6379)
+    val graph = Graph(
+        name = "neo4j",
+        driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
+    )
     @Test
     fun `Basic Test #1`(){
         graph.query {

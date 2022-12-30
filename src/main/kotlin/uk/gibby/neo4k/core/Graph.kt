@@ -18,13 +18,10 @@ import uk.gibby.neo4k.returns.empty.EmptyReturn
  * @param password The database password
  */
 class Graph(
-    private val name: String,
-    host: String,
-    port: Int = 7687,
-    password: String? = null
+    internal val name: String,
+    internal val driver: Driver,
 ) {
-    internal val client = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
-        .apply { session().executeWrite{ it.run("CREATE DATABASE $name IF NOT EXISTS") } }
+    init { driver.apply { session().executeWrite{ it.run("CREATE DATABASE $name IF NOT EXISTS") } } }
 
     /**
      * Query
@@ -40,21 +37,35 @@ class Graph(
         val queryEnd = scope.getAfterString()
         return when(result){
             is EmptyReturn -> {
-                client.session(SessionConfig.forDatabase(name)).executeWrite {
+                driver.session(SessionConfig.forDatabase(name)).executeWrite {
                     val query = Query("$queryStart $queryEnd")
                     it.run(query)
                 }
                 emptyList()
             }
             else -> {
-                client.session(SessionConfig.forDatabase(name)).executeWrite{
+                driver.session(SessionConfig.forDatabase(name)).executeWrite{
                     val query = Query("$queryStart RETURN ${result.getString()} $queryEnd".also { println(it) })
                     if(result is MultipleReturn) it.run(query).list { result.parse(it.values()) }
                         else { it.run(query).list { result.parse(it.values().first()) } }
                 }
             }
+        }
     }
-    }/*
+
+    /**
+     * Delete
+     *
+     * Deletes the graph (graph by name: [name])
+     */
+    fun delete(){
+        driver.session(SessionConfig.forDatabase(name)).executeWrite{
+            val query = Query("MATCH (n) DETACH DELETE n")
+            it.run(query)
+        }
+    }
+
+           /*
     fun <T, U: ReturnValue<T>>queryUnion(vararg queries: QueryScope.() -> U): List<T>{
         var result: U? = null
         val fullQuery = queries.joinToString(" UNION "){ queryBuilder ->
@@ -79,15 +90,4 @@ class Graph(
     }
     */
 
-    /**
-     * Delete
-     *
-     * Deletes the graph (graph by name: [name])
-     */
-    fun delete(){
-        client.session(SessionConfig.forDatabase(name)).executeWrite{
-            val query = Query("MATCH (n) DETACH DELETE n")
-            it.run(query)
-        }
-    }
 }
