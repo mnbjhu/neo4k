@@ -1,6 +1,7 @@
 package uk.gibby.neo4k.returns
 
 
+import kotlinx.serialization.KSerializer
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.generic.Nullable
 import uk.gibby.neo4k.returns.generic.StructReturn
@@ -22,6 +23,7 @@ import kotlin.reflect.full.primaryConstructor
  * @param T Return value type.
  */
 abstract class ReturnValue<T>{
+    internal abstract val serializer: KSerializer<T>
     /**
      * Type
      *
@@ -83,6 +85,10 @@ abstract class ReturnValue<T>{
      * @return Structured representation of [value]
      */
     abstract fun encode(value: T): ReturnValue<T>
+    override fun equals(other: Any?): Boolean {
+        return if(other is ReturnValue<*>) type == other.type
+        else false
+    }
 
     internal abstract fun createReference(newRef: String): ReturnValue<T>
     internal abstract fun createDummy(): ReturnValue<T>

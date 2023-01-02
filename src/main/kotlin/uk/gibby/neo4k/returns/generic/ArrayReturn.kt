@@ -1,5 +1,7 @@
 package uk.gibby.neo4k.returns.generic
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import org.neo4j.driver.internal.value.ListValue
 import uk.gibby.neo4k.core.NameCounter
 import uk.gibby.neo4k.core.QueryScope
@@ -30,6 +32,9 @@ import kotlin.reflect.full.isSubtypeOf
  * @sample [e2e.types.Array.matchAttribute]
  */
 class ArrayReturn<T, U: ReturnValue<T>>(private val values: Box<List<U>>, internal val inner: U): DataType<List<T>>() {
+    override val serializer: KSerializer<List<T>>
+        get() = ListSerializer(inner.serializer)
+
     override fun getStructuredString(): String {
         return when(values){
             is Box.WithoutValue -> throw Exception("return_types.ArrayReturn cannot getStructuredString with out values set")

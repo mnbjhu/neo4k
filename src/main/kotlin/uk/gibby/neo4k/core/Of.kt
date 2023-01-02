@@ -17,10 +17,10 @@ infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createInstance(th
 
 class TypeProducer<T, U: ReturnValue<T>>(val inner: U)
 
-fun <T, U: NotNull<T>>nullable(type: KFunction<U>) = TypeProducer(
+fun <T: Any, U: NotNull<T>>nullable(type: KFunction<U>) = TypeProducer(
     Nullable(Box.WithoutValue, createDummy(type))
 )
-inline fun <reified T, U: NotNull<T>>nullable(type: TypeProducer<T, U>) = TypeProducer(
+inline fun <reified T: Any, U: NotNull<T>>nullable(type: TypeProducer<T, U>) = TypeProducer(
     Nullable(Box.WithoutValue, type.inner)
 )
 
