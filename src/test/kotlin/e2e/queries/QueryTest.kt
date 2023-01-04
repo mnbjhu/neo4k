@@ -1,5 +1,4 @@
 package e2e.queries
-/*
 import uk.gibby.neo4k.core.invoke
 import e2e.schemas.ActedIn
 import e2e.schemas.Actor
@@ -9,12 +8,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.Match.Companion.match
-import uk.gibby.neo4k.clauses.Where.Companion.where
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.queries.Query0.Companion.query
-import uk.gibby.neo4k.queries.Query1.Companion.query
-import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
 
 class QueryTest: GraphTest() {
@@ -37,6 +32,7 @@ class QueryTest: GraphTest() {
         movies `should be equal to` listOf("Star Wars: Episode V - The Empire Strikes Back")
     }
 
+    /*
     @Test
     fun testQueryWithOneParam(){
         val findMoviesContainingText = query(::StringReturn) { searchText ->
@@ -46,6 +42,5 @@ class QueryTest: GraphTest() {
         }
         graph.findMoviesContainingText("Star Wars").size `should be equal to` 1
         graph.findMoviesContainingText("Lord Of The Rings").size `should be equal to` 0
-    }
+    } */
 }
-*/

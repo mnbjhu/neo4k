@@ -20,6 +20,7 @@ import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
 import uk.gibby.neo4k.paths.`←-o`
 import uk.gibby.neo4k.queries.Query0
+import uk.gibby.neo4k.queries.Query0.Companion.query
 import uk.gibby.neo4k.returns.MultipleReturn2
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.many
@@ -86,8 +87,8 @@ class SerializationTest {
     }
     @Test
     fun ktorSingleTest(){
-        val graph = NewGraph("neo4j", "localhost", "test", "test")
-        val query = Query0{
+        val graph = Graph("neo4j", "test", "test", "localhost")
+        val myQuery = query{
             val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
             val (title, averageRating, numberOfRatings) =
                 using(movie.title, avg(userRating.rating), count(userRating))
@@ -96,11 +97,11 @@ class SerializationTest {
             limit(25)
             title
         }
-        println(query.execute(graph))
+        println(graph.myQuery())
     }
     @Test
     fun ktorBasic(){
-        val graph = NewGraph("neo4j", "localhost", "test", "test")
+        val graph = Graph("neo4j", "test", "test", "localhost")
         val query = Query0{
             val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
             val (title, averageRating, numberOfRatings) =

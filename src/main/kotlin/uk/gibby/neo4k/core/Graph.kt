@@ -35,7 +35,7 @@ class Graph(
     val password: String,
     val host: String
 ) {
-    val client = HttpClient(CIO){
+    private val client = HttpClient(CIO){
         install(ContentNegotiation){
             json()
         }
@@ -84,7 +84,11 @@ class Graph(
             }
         }
     }
-
+    suspend fun sendQuery(query: String, params: String) = client.post("http://${host}:7474/db/${name}/tx/commit"){
+        basicAuth(username, password)
+        contentType(ContentType.Application.Json)
+        setBody("{\"statements\" : [{\"statement\": \"$query\", \"parameters\": {$params}}]}")
+    }.bodyAsText()
     /**
      * Delete
      *
@@ -95,7 +99,7 @@ class Graph(
             client.post("http://${host}:7474/db/${name}/tx/commit"){
                 basicAuth(username, password)
                 contentType(ContentType.Application.Json)
-                setBody("{\"statements\" : [{\"statement\" : \"MATCH (n) DETACH DELETE n\"}]}")
+                setBody("{\"statements\" : [{\"statement\": \"MATCH (n) DETACH DELETE n\"}]}")
             }
         }
     }
