@@ -1,4 +1,5 @@
 package e2e.queries
+/*
 import uk.gibby.neo4k.core.invoke
 import e2e.schemas.ActedIn
 import e2e.schemas.Actor
@@ -47,3 +48,4 @@ class QueryTest: GraphTest() {
         graph.findMoviesContainingText("Lord Of The Rings").size `should be equal to` 0
     }
 }
+*/

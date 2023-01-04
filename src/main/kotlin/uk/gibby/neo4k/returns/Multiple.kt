@@ -28,7 +28,6 @@ data class SingleReturn<a, A: ReturnValue<a>>(val inner: A): ReturnValue<a>(){
                 return f!!
             }
 
-
             override fun serialize(encoder: Encoder, value: a) {
                 val composite = encoder.beginStructure(descriptor)
                 composite.encodeSerializableElement(descriptor, 0, inner.serializer, value)
@@ -80,7 +79,6 @@ data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first
             return f!! to s!!
         }
 
-
         override fun serialize(encoder: Encoder, value: Pair<a, b>) {
             val composite = encoder.beginStructure(descriptor)
             composite.encodeSerializableElement(descriptor, 0, first.serializer, value.first)
@@ -112,9 +110,37 @@ data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first
 }
 
 data class MultipleReturn3<a, A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: ReturnValue<c>>(val first: A, val second: B, val third: C): ReturnValue<Triple<a, b, c>>(), MultipleReturn {
-    override val serializer: KSerializer<Triple<a, b, c>>
-        get() = TODO("Not yet implemented")
+    override val serializer: KSerializer<Triple<a, b, c>> by lazy {
+        object: KSerializer<Triple<a, b, c>> {
+            override val descriptor = serialDescriptor<JsonArray>()
 
+            override fun deserialize(decoder: Decoder): Triple<a, b, c> {
+                var f: a? = null
+                var s: b? = null
+                var t: c? = null
+                val composite = decoder.beginStructure(descriptor)
+                while (true){
+                    when(composite.decodeElementIndex(descriptor)){
+                        DECODE_DONE -> break
+                        0 -> f = composite.decodeSerializableElement(descriptor, 0, first.serializer)
+                        1 -> s = composite.decodeSerializableElement(descriptor, 1, second.serializer)
+                        2 -> t = composite.decodeSerializableElement(descriptor, 2, third.serializer)
+                    }
+                }
+                composite.endStructure(descriptor)
+                return Triple(f!!, s!!, t!!)
+            }
+
+            override fun serialize(encoder: Encoder, value: Triple<a, b, c>) {
+                val composite = encoder.beginStructure(descriptor)
+                composite.encodeSerializableElement(descriptor, 0, first.serializer, value.first)
+                composite.encodeSerializableElement(descriptor, 1, second.serializer, value.second)
+                composite.encodeSerializableElement(descriptor, 2, third.serializer, value.third)
+                composite.endStructure(descriptor)
+            }
+
+        }
+    }
     override fun getStructuredString(): String {
         return "${first.getString()}, ${second.getString()}, ${third.getString()}"
     }

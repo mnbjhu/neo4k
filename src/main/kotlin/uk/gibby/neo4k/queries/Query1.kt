@@ -8,7 +8,7 @@ import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.empty.EmptyReturn
 import kotlin.reflect.KFunction
-
+/*
 class Query1<T, a, A: ReturnValue<a>>(first: A, builder: QueryScope.(A) -> ReturnValue<T>) {
     private val scope = QueryScope()
     private val returnValue = scope.builder(first.createReference("\$first") as A)
@@ -36,4 +36,4 @@ class Query1<T, a, A: ReturnValue<a>>(first: A, builder: QueryScope.(A) -> Retur
             return { first -> query.execute(this, first) }
         }
     }
-}
+}*/

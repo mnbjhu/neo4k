@@ -65,7 +65,7 @@ class DataParser<T, U: ReturnValue<T>>(val result: U): KSerializer<T> {
         context.endStructure(descriptor)
     }
 }
-class ResultSetParser<T, U: ReturnValue<T>>(val result: U): KSerializer<List<List<T>>> {
+class ResultSetParser<T, U: ReturnValue<T>>(private val result: U): KSerializer<List<List<T>>> {
     override fun deserialize(decoder: Decoder): List<List<T>> {
         val context = decoder.beginStructure(descriptor)
         var r: List<List<T>>? = null

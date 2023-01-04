@@ -1,8 +1,20 @@
 package uk.gibby.neo4k.core
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import org.neo4j.driver.*
 import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.SingleReturn
 import uk.gibby.neo4k.returns.empty.EmptyReturn
 
 /**
@@ -19,10 +31,23 @@ import uk.gibby.neo4k.returns.empty.EmptyReturn
  */
 class Graph(
     internal val name: String,
-    internal val driver: Driver,
+    val username: String,
+    val password: String,
+    val host: String
 ) {
-    init { driver.apply { session().executeWrite{ it.run("CREATE DATABASE $name IF NOT EXISTS") } } }
-
+    val client = HttpClient(CIO){
+        install(ContentNegotiation){
+            json()
+        }
+        install(Auth) {
+            basic {
+                credentials {
+                    BasicAuthCredentials(this@Graph.username, this@Graph.password)
+                }
+                realm = "Access to the '/' path"
+            }
+        }
+    }
     /**
      * Query
      *
@@ -32,22 +57,29 @@ class Graph(
      */
     fun <T>query(queryBuilder: QueryScope.() -> ReturnValue<T>): List<T>{
         val scope = QueryScope()
-        val result = scope.queryBuilder()
-        val queryStart = scope.getString()
-        val queryEnd = scope.getAfterString()
-        return when(result){
+        val returnValue = scope.queryBuilder()
+        val resultParser = if(returnValue is MultipleReturn) ResultSetParser(returnValue)
+            else ResultSetParser(SingleReturn(returnValue))
+        val queryString = if (returnValue is EmptyReturn) "${scope.getString()} ${scope.getAfterString()}"
+        else "${scope.getString()} RETURN ${returnValue.getString()} ${scope.getAfterString()}"
+        return when(returnValue){
             is EmptyReturn -> {
-                driver.session(SessionConfig.forDatabase(name)).executeWrite {
-                    val query = Query("$queryStart $queryEnd")
-                    it.run(query)
-                }
+                runBlocking {
+                client.post("http://${host}:7474/db/${name}/tx/commit"){
+                    basicAuth(username, password)
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
+                }}
                 emptyList()
             }
             else -> {
-                driver.session(SessionConfig.forDatabase(name)).executeWrite{
-                    val query = Query("$queryStart RETURN ${result.getString()} $queryEnd".also { println(it) })
-                    if(result is MultipleReturn) it.run(query).list { result.parse(it.values()) }
-                        else { it.run(query).list { result.parse(it.values().first()) } }
+                runBlocking {
+                    val response = client.post("http://${host}:7474/db/${name}/tx/commit"){
+                        basicAuth(username, password)
+                        contentType(ContentType.Application.Json)
+                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
+                    }
+                    Json.decodeFromString(resultParser, response.bodyAsText())[0]
                 }
             }
         }
@@ -59,9 +91,12 @@ class Graph(
      * Deletes the graph (graph by name: [name])
      */
     fun delete(){
-        driver.session(SessionConfig.forDatabase(name)).executeWrite{
-            val query = Query("MATCH (n) DETACH DELETE n")
-            it.run(query)
+        runBlocking {
+            client.post("http://${host}:7474/db/${name}/tx/commit"){
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody("{\"statements\" : [{\"statement\" : \"MATCH (n) DETACH DELETE n\"}]}")
+            }
         }
     }
 

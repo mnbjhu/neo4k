@@ -8,7 +8,9 @@ import uk.gibby.neo4k.core.Graph
 abstract class GraphTest {
     protected val graph = Graph(
         name = this::class.qualifiedName!!.replace("_", "."),
-        driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
+        host = "localhost",
+        username = "test",
+        password = "test"
     )
     @BeforeEach
     fun clearGraph(){

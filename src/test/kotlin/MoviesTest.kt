@@ -30,7 +30,9 @@ import uk.gibby.neo4k.returns.primitives.StringReturn
 class MoviesTest {
     val graph = Graph(
         name = "neo4j",
-        driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
+        host = "localhost",
+        username = "test",
+        password = "test"
     )
     @Test
     fun `Basic Test #1`(){
