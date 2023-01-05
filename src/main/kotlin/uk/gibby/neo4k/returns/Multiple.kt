@@ -1,5 +1,8 @@
 package uk.gibby.neo4k.returns
 
+
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
@@ -10,54 +13,33 @@ import uk.gibby.neo4k.core.QueryScope
 
 sealed interface MultipleReturn
 
-data class SingleReturn<a, A: ReturnValue<a>>(val inner: A): ReturnValue<a>(){
-     override val serializer: KSerializer<a> by lazy {
-         object: KSerializer<a> {
+data class SingleReturn<a: Any?, out A: KSerializer<a?>>(val inner: A){
+     @OptIn(ExperimentalSerializationApi::class)
+     val serializer: KSerializer<a?> by lazy {
+         object: KSerializer<a?> {
             override val descriptor = serialDescriptor<JsonArray>()
 
-            override fun deserialize(decoder: Decoder): a {
+            override fun deserialize(decoder: Decoder): a? {
                 var f: a? = null
                 val composite = decoder.beginStructure(descriptor)
                 while (true){
                     when(composite.decodeElementIndex(descriptor)){
                         DECODE_DONE -> break
-                        0 -> f = composite.decodeSerializableElement(descriptor, 0, inner.serializer)
+                        0 -> f = composite.decodeNullableSerializableElement(descriptor, 0, inner as KSerializer<Any?>) as a?
                     }
                 }
                 composite.endStructure(descriptor)
-                return f!!
+                return f
             }
 
-            override fun serialize(encoder: Encoder, value: a) {
+            override fun serialize(encoder: Encoder, value: a?) {
                 val composite = encoder.beginStructure(descriptor)
-                composite.encodeSerializableElement(descriptor, 0, inner.serializer, value)
+                composite.encodeNullableSerializableElement(descriptor, 0, inner, value)
                 composite.endStructure(descriptor)
             }
 
         }
      }
-
-    override fun getStructuredString(): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun parse(value: Any?): a {
-        TODO("Not yet implemented")
-    }
-
-    override fun createReference(newRef: String): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-    override fun createDummy(): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-    override fun encode(value: a): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-
 }
 
 data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first: A, val second: B): ReturnValue<Pair<a, b>>(), MultipleReturn {

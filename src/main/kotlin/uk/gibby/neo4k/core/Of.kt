@@ -13,7 +13,7 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
 
-infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createInstance(this, value)
+infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createDummy(this).encode(value) as U
 
 class TypeProducer<T, U: ReturnValue<T>>(val inner: U)
 

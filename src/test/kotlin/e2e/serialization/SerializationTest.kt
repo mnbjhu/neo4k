@@ -64,7 +64,7 @@ class SerializationTest {
     fun decodeData(){
 
         val data = "{\"row\": [\"Godfather, The\",4.487499999999999],\"meta\": [null, null]}"
-        val parser = DataParser(MultipleReturn2(ReturnValue.createReference(::StringReturn, "test"), ReturnValue.createReference(::DoubleReturn, "test2")))
+        val parser = DataParser(MultipleReturn2(ReturnValue.createReference(::StringReturn, "test"), ReturnValue.createReference(::DoubleReturn, "test2")).serializer)
         println(Json.encodeToString(parser, "test" to 1.0))
         Json.decodeFromString(parser, data)
     }
@@ -73,7 +73,7 @@ class SerializationTest {
     fun decodeRecord(){
         val data = File("C:\\Users\\james\\IdeaProjects\\neo4k\\src\\test\\resources\\response.json").readText()
         val parser = MultipleReturn2(ReturnValue.createReference(::StringReturn, "test"), ReturnValue.createReference(::DoubleReturn, "test"))
-        val newParser = RecordParser(parser)
+        val newParser = RecordParser(parser.serializer)
         Json.decodeFromString(newParser, data)
     }
 
@@ -81,7 +81,7 @@ class SerializationTest {
     fun decodeResultSet(){
         val data = File("C:\\Users\\james\\IdeaProjects\\neo4k\\.idea\\httpRequests\\2023-01-02T183145.200.json").readText()
         val parser = MultipleReturn2(ReturnValue.createReference(::StringReturn, "test"), ReturnValue.createReference(::DoubleReturn, "test"))
-        val newParser = ResultSetParser(parser)
+        val newParser = ResultSetParser(parser.serializer)
         val parsed = Json.decodeFromString(newParser, data)
         println(parsed)
     }

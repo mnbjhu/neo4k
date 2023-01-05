@@ -1,23 +1,14 @@
 package uk.gibby.neo4k.returns.generic
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.modules.EmptySerializersModule
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.overwriteWith
 import org.neo4j.driver.internal.value.ListValue
-import uk.gibby.neo4k.core.NodeParamMap
-import uk.gibby.neo4k.core.ParamMap
 import uk.gibby.neo4k.returns.DataType
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.ReturnScope
+import uk.gibby.neo4k.returns.util.ReturnValueType
 import java.lang.ClassCastException
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
@@ -30,8 +21,7 @@ abstract class StructReturn<T>: DataType<T>(){
         .filter { it.returnType.isSubtypeOf(ReturnValue::class.createType(listOf(KTypeProjection.STAR))) }
         .map { it.name to (it.call(this) as ReturnValue<*>) }
     }
-    val indexMap by lazy{ elements.mapIndexed { index, pair -> pair.second to index }.toMap() }
-    @OptIn(ExperimentalSerializationApi::class)
+    val indexMap by lazy{ elements.mapIndexed { index, pair -> pair.first to index }.toMap() }
     override val serializer: KSerializer<T> by lazy { object : KSerializer<T>{
         override val descriptor = serialDescriptor<JsonArray>()
 
@@ -73,10 +63,9 @@ abstract class StructReturn<T>: DataType<T>(){
     override fun encode(value: T): StructReturn<T>{
         val params = StructParamMap()
         params.encodeStruct(value)
-        val args = params.getList().mapIndexed { index,  any ->
-            (elements[index].second as ReturnValue<Any?>).encode(any)
-        }
-        return this::class.primaryConstructor!!.call(args)
+        val constructor = this::class.primaryConstructor!!
+        val map = params.map as Map<*, *>
+        return constructor.callBy(constructor.parameters.associateWith { map[it.name!!] })
     }
     abstract fun StructParamMap.encodeStruct(value: T)
     override fun parse(value: Any?): T {
@@ -91,10 +80,10 @@ abstract class StructReturn<T>: DataType<T>(){
 
     override fun createReference(newRef: String) = Companion.createReference(this::class.createType(), newRef) as StructReturn<T>
     override fun createDummy() = createDummy(this::class.createType()) as StructReturn<T>
-    inner class StructParamMap(){
-        private val map: MutableList<Any?> = MutableList(elements.size){ null }
+    inner class StructParamMap{
+        val map = mutableMapOf<String, Any?>()
         operator fun <T, U: ReturnValue<T>>U.get(value: T){
-            map[indexMap[this]!!] = value
+            map[(type as ReturnValueType.Reference).ref] = encode(value)
         }
         fun getList() = map.toList()
     }

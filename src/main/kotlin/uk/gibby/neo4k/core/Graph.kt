@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.neo4j.driver.*
 import uk.gibby.neo4k.returns.MultipleReturn
@@ -58,8 +59,8 @@ class Graph(
     fun <T>query(queryBuilder: QueryScope.() -> ReturnValue<T>): List<T>{
         val scope = QueryScope()
         val returnValue = scope.queryBuilder()
-        val resultParser = if(returnValue is MultipleReturn) ResultSetParser(returnValue)
-            else ResultSetParser(SingleReturn(returnValue))
+        val resultParser = if(returnValue is MultipleReturn) ResultSetParser(returnValue.serializer as KSerializer<T?>)
+            else ResultSetParser(SingleReturn(returnValue.serializer as KSerializer<T?>).serializer)
         val queryString = if (returnValue is EmptyReturn) "${scope.getString()} ${scope.getAfterString()}"
         else "${scope.getString()} RETURN ${returnValue.getString()} ${scope.getAfterString()}"
         return when(returnValue){
@@ -77,10 +78,10 @@ class Graph(
                     val response = client.post("http://${host}:7474/db/${name}/tx/commit"){
                         basicAuth(username, password)
                         contentType(ContentType.Application.Json)
-                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
+                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}".also { println(it) })
                     }
-                    Json.decodeFromString(resultParser, response.bodyAsText())[0]
-                }
+                    Json.decodeFromString(resultParser, response.bodyAsText().also { println(it) })[0]
+                } as List<T>
             }
         }
     }

@@ -20,6 +20,7 @@ class StringReturn(value: String?): PrimitiveReturn<String>(value) {
     override fun getPrimitiveString(from: String): String = "'${from
         .replace("\\", "\\\\")
         .replace("'", "\\'")}'"
+        .replace("\\", "\\\\")
 
     override fun encode(value: String) = StringReturn(value)
     override fun parse(value: Any?): String {

@@ -22,8 +22,7 @@ import kotlin.reflect.full.withNullability
  * @sample [e2e.types.Array.createNullLiteral]
  */
 class Nullable<T: Any, U: NotNull<T>>(private val value: Box<U>, private val dummy: U): ReturnValue<T?>() {
-    override val serializer: KSerializer<T?>
-        get() = dummy.serializer.nullable
+    override val serializer: KSerializer<T?> = dummy.serializer.nullable
 
     override fun getStructuredString() = when(value){
         is Box.WithoutValue -> "NULL"

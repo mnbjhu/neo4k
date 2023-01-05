@@ -10,11 +10,13 @@ import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.serializer
 import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.empty.EmptyReturn
 import java.lang.Exception
 
-class RecordParser<T, U: ReturnValue<T>>(val result: U): KSerializer<List<T>> {
+class RecordParser<T, U: KSerializer<T>>(val result: U): KSerializer<List<T>> {
     override fun deserialize(decoder: Decoder): List<T> {
         val context = decoder.beginStructure(descriptor)
         var r: List<T>? = null
@@ -42,34 +44,33 @@ class RecordParser<T, U: ReturnValue<T>>(val result: U): KSerializer<List<T>> {
 }
 
 
-class DataParser<T, U: ReturnValue<T>>(val result: U): KSerializer<T> {
+class DataParser<T, U: KSerializer<T>>(val result: U): KSerializer<T> {
     override fun deserialize(decoder: Decoder): T {
         val context = decoder.beginStructure(descriptor)
         var r: T? = null
         while (true){
             when(context.decodeElementIndex(descriptor)){
-                0 -> r = context.decodeSerializableElement(descriptor, 0, result.serializer)
+                0 -> r = context.decodeSerializableElement(descriptor, 0, result)
                 DECODE_DONE -> break
-                else -> { context.decodeSerializableElement(descriptor, 1, ListSerializer(String.serializer().nullable)) }
+                else -> { context.decodeSerializableElement(descriptor, 1, ListSerializer(JsonElement.serializer().nullable)) }
             }
         }
         context.endStructure(descriptor)
-        return r!!
+        return r as T
     }
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("data"){
-        element("row", result.serializer.descriptor)
+        element("row", result.descriptor)
         element("meta", String.serializer().nullable.descriptor)
     }
 
     override fun serialize(encoder: Encoder, value: T) {
         val context = encoder.beginStructure(descriptor)
-        context.encodeSerializableElement(descriptor, 0, result.serializer, value)
+        context.encodeSerializableElement(descriptor, 0, result, value)
         context.endStructure(descriptor)
     }
 }
-class ResultSetParser<T, U: ReturnValue<T>>(private val result: U): KSerializer<List<List<T>>> {
-
+class ResultSetParser<T, U: KSerializer<T>>(private val result: U): KSerializer<List<List<T>>> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("result_set"){
         element("results", ListSerializer(RecordParser(result)).descriptor)
         element("errors", ListSerializer(String.serializer()).descriptor)

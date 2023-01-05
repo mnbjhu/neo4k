@@ -112,7 +112,7 @@ abstract class ReturnValue<T>{
                 type.isSubtypeOf(StructReturn::class.createType(listOf(KTypeProjection.STAR))) -> {
                     val constructor = (type.classifier as KClass<*>).primaryConstructor!!
                     val params = constructor.parameters.associateWith {
-                        createDummy(it.type)
+                        createReference(it.type, it.name!!)
                     }
                     (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly }
                 }
