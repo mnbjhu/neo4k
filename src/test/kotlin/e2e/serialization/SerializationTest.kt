@@ -40,7 +40,7 @@ class SerializationTest {
      }
     @Test
     fun testStructSerializer(){
-        val parser = ReturnValue.createReference(VectorExample::Vector2Return, "Some Ref").serializer
+        val parser = ReturnValue.createDummy(VectorExample::Vector2Return, "Some Ref").serializer
         val stringData = Json.encodeToString(parser, VectorExample.Vector2(1, 2))
         stringData `should be equal to` "[1,2]"
         Json.decodeFromString(parser, stringData) `should be equal to` VectorExample.Vector2(1, 2)

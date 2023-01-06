@@ -34,7 +34,6 @@ sealed class Entity<T>: NotNull<T>(){
 
         override fun deserialize(decoder: Decoder): T {
             val composite = decoder.beginStructure(descriptor)
-            //if (composite.decodeSequentially()){
             val map = mutableMapOf<String, Any?>()
             while (true){
                 when(val index = composite.decodeElementIndex(descriptor)){
@@ -47,7 +46,6 @@ sealed class Entity<T>: NotNull<T>(){
             }
             composite.endStructure(descriptor)
                 return ReturnScope(map).decode()
-            //} else throw Exception("Failed to deserialize JSON")
         }
         override fun serialize(encoder: Encoder, value: T) {
             // TODO:

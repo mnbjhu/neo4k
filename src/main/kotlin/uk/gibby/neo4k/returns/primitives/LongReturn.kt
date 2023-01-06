@@ -33,6 +33,6 @@ class LongReturn(value: Long?): PrimitiveReturn<Long>(value) {
     override fun createReference(newRef: String): LongReturn{
         return LongReturn(null).apply { type = ReturnValueType.Reference(newRef) }
     }
-    override fun createDummy() = LongReturn(null).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = LongReturn(null).apply { type = ReturnValueType.ParserOnly("dummy") }
 
 }

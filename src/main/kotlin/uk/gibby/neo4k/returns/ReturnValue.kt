@@ -94,27 +94,27 @@ abstract class ReturnValue<T>{
     internal abstract fun createDummy(): ReturnValue<T>
     companion object{
         private val dummyCache = mutableMapOf<String, Any>()
-        internal fun <T, U: ReturnValue<T>, A: ArrayReturn<T, U>>createDummyArray(type: KType): Any{
-            return ArrayReturn(Box.WithoutValue, createDummy(type) as U)
-                .apply { this.type = ReturnValueType.ParserOnly }
+        internal fun <T, U: ReturnValue<T>, A: ArrayReturn<T, U>>createDummyArray(type: KType, name: String): Any{
+            return ArrayReturn(Box.WithoutValue, createDummy(type, "inner") as U)
+                .apply { this.type = ReturnValueType.ParserOnly(name) }
         }
         internal fun <T, U: ReturnValue<T>, A: ArrayReturn<T, U>>createReferenceArray(type: KType, ref: String): Any{
-            return ArrayReturn(Box.WithoutValue, createDummy(type) as U)
+            return ArrayReturn(Box.WithoutValue, createDummy(type, "inner") as U)
                 .apply { this.type = ReturnValueType.Reference(ref) }
         }
-        internal fun createDummy(type: KType): Any{
+        internal fun createDummy(type: KType, name: String = "dummy"): Any{
             val cached = dummyCache[type.toString()]
             if(cached != null) return cached
             return when{
                 type.isSubtypeOf(ArrayReturn::class.createType(listOf(KTypeProjection.STAR, KTypeProjection.STAR))) -> {
-                    createDummyArray<Any, ReturnValue<Any>, ArrayReturn<Any, ReturnValue<Any>>>(type.arguments[1].type!!)
+                    createDummyArray<Any, ReturnValue<Any>, ArrayReturn<Any, ReturnValue<Any>>>(type.arguments[1].type!!, name)
                 }
                 type.isSubtypeOf(StructReturn::class.createType(listOf(KTypeProjection.STAR))) -> {
                     val constructor = (type.classifier as KClass<*>).primaryConstructor!!
                     val params = constructor.parameters.associateWith {
-                        createReference(it.type, it.name!!)
+                        createDummy(it.type, it.name!!)
                     }
-                    (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly }
+                    (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly(name) }
                 }
                 type.isSubtypeOf(Entity::class.createType(listOf(KTypeProjection.STAR))) -> {
                     val constructor = (type.classifier as KClass<*>).primaryConstructor!!
@@ -127,18 +127,18 @@ abstract class ReturnValue<T>{
                             throw Exception("Attributes can only be return_types.NotNull or return_types.Nullable<return_types.NotNull>")
                         createReference(it.type, it.name!!)
                     }
-                    (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly }
+                    (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly(name) }
                 }
                 type.isSubtypeOf(Nullable::class.createType(listOf(KTypeProjection.STAR, KTypeProjection.STAR)), ) -> {
-                    Nullable<Any, NotNull<Any>>(Box.WithoutValue, createDummy(type.arguments[1].type!!) as NotNull<Any>)
-                        .apply { this.type = ReturnValueType.ParserOnly }
+                    Nullable<Any, NotNull<Any>>(Box.WithoutValue, createDummy(type.arguments[1].type!!, "inner") as NotNull<Any>)
+                        .apply { this.type = ReturnValueType.ParserOnly(name) }
                 }
                 type.isSubtypeOf(PrimitiveReturn::class.createType(listOf(KTypeProjection.STAR))) -> {
                     val constructor = (type.classifier as KClass<*>).primaryConstructor!!
-                    (constructor.call(null) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly }
+                    (constructor.call(null) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly(name) }
                 }
                 else -> throw Exception("Couldn't create dummy for type: $type")
-            }.also { dummyCache[type.toString()] = it }
+            }
         }
         internal fun createReference(type: KType, ref: String): Any{
             return when{
@@ -167,7 +167,7 @@ abstract class ReturnValue<T>{
                     (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.Reference(ref) }
                 }
                 type.isSubtypeOf(Nullable::class.createType(listOf(KTypeProjection.STAR, KTypeProjection.STAR)), ) -> {
-                    Nullable(Box.WithoutValue, createDummy(type.arguments[1].type!!) as NotNull<Any>)
+                    Nullable(Box.WithoutValue, createDummy(type.arguments[1].type!!, "inner") as NotNull<Any>)
                         .apply { this.type = ReturnValueType.Reference(ref) }
                 }
                 type.isSubtypeOf(PrimitiveReturn::class.createType(listOf(KTypeProjection.STAR))) -> {
@@ -178,25 +178,22 @@ abstract class ReturnValue<T>{
             }
         }
 
-        internal fun <T, U: ReturnValue<T>>createDummy(type: KFunction<U>): U{
-            val cached = dummyCache[type.toString()]
-            return if(cached == null){
-                (createDummy(type.returnType) as U).also { dummyCache[type.toString()] = it }
-            } else (cached as U)
+        internal fun <T, U: ReturnValue<T>>createDummy(type: KFunction<U>, name: String = "dummy"): U{
+                return (createDummy(type.returnType, name) as U).also { dummyCache[type.toString()] = it }
         }
 
         internal fun <T, U: ReturnValue<T>>createReference(type: KFunction<U>, ref: String): U{
 
-            return createDummy(type).createReference(ref) as U
+            return createDummy(type, "dummy").createReference(ref) as U
         }
 
 
         internal fun <T, U: ReturnValue<T>>createInstance(type: KFunction<U>, value: T): U{
-            val dummy = createDummy(type)
+            val dummy = createDummy(type, "dummy")
             return dummy.encode(value) as U
         }
         internal fun <T, U: ReturnValue<T>>createInstance(type: KType, value: T): U{
-            val dummy = createDummy(type) as U
+            val dummy = createDummy(type, "dummy") as U
             return dummy.encode(value) as U
         }
 

@@ -37,7 +37,7 @@ class Nullable<T: Any, U: NotNull<T>>(private val value: Box<U>, private val dum
         return Nullable(Box.WithoutValue, dummy).also { type = ReturnValueType.Reference(newRef) }
     }
 
-    override fun createDummy() = Nullable(Box.WithoutValue, dummy).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = Nullable(Box.WithoutValue, dummy).apply { type = ReturnValueType.ParserOnly("inner") }
 
     override fun encode(value: T?): Nullable<T, U> {
         return if (value == null) Nullable(Box.WithoutValue, dummy)

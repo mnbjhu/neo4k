@@ -33,6 +33,6 @@ class BooleanReturn(value: Boolean?): PrimitiveReturn<Boolean>(value) {
     override fun createReference(newRef: String): BooleanReturn {
         return BooleanReturn(null).apply { type = ReturnValueType.Reference(newRef) }
     }
-    override fun createDummy() = BooleanReturn(null).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = BooleanReturn(null).apply { type = ReturnValueType.ParserOnly("dummy") }
 
 }

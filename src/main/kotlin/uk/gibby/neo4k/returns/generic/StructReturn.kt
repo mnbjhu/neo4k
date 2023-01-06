@@ -45,7 +45,7 @@ abstract class StructReturn<T>: DataType<T>(){
             encoder.beginStructure(descriptor).apply{
 
                 values.forEachIndexed { index, any ->
-                    encodeSerializableElement(descriptor, index, elements[index].second.serializer as KSerializer<Any?>, any)
+                    encodeSerializableElement(descriptor, index, elements[index].second.serializer as KSerializer<Any?>, (any.second))
                 }
             }.endStructure(descriptor)
 
@@ -61,11 +61,17 @@ abstract class StructReturn<T>: DataType<T>(){
             }
     }
     override fun encode(value: T): StructReturn<T>{
-        val params = StructParamMap()
-        params.encodeStruct(value)
+        val paramMap = StructParamMap()
+        with(createDummy()){
+            paramMap.encodeStruct(value)
+        }
         val constructor = this::class.primaryConstructor!!
-        val map = params.map as Map<*, *>
-        return constructor.callBy(constructor.parameters.associateWith { map[it.name!!] })
+        val map = paramMap.map
+        val members = this::class.memberProperties
+            .filter { it.returnType.isSubtypeOf(ReturnValue::class.createType(listOf(KTypeProjection.STAR))) }
+        return constructor.callBy(constructor.parameters.associateWith {
+            (members.first { mem -> mem.name == it.name }.call(this) as ReturnValue<Any?>).encode(map[it.name!!])
+        })
     }
     abstract fun StructParamMap.encodeStruct(value: T)
     override fun parse(value: Any?): T {
@@ -83,7 +89,7 @@ abstract class StructReturn<T>: DataType<T>(){
     inner class StructParamMap{
         val map = mutableMapOf<String, Any?>()
         operator fun <T, U: ReturnValue<T>>U.get(value: T){
-            map[(type as ReturnValueType.Reference).ref] = encode(value)
+            map[(type as ReturnValueType.ParserOnly).name] = value
         }
         fun getList() = map.toList()
     }

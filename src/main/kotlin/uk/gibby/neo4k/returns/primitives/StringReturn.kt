@@ -34,6 +34,6 @@ class StringReturn(value: String?): PrimitiveReturn<String>(value) {
     override fun createReference(newRef: String): StringReturn{
         return StringReturn(null).apply { type = ReturnValueType.Reference(newRef) }
     }
-    override fun createDummy() = StringReturn(null).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = StringReturn(null).apply { type = ReturnValueType.ParserOnly("dummy") }
 
 }

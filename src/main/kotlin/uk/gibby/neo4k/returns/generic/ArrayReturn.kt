@@ -49,7 +49,7 @@ class ArrayReturn<T, U: ReturnValue<T>>(private val values: Box<List<U>>, intern
 
     override fun createReference(newRef: String): ArrayReturn<T, U>  = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.Reference(newRef) }
 
-    override fun createDummy() = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.ParserOnly("inner") }
 
 
     override fun encode(value: List<T>): ArrayReturn<T, U> {

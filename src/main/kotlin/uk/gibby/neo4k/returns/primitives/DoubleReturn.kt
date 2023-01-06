@@ -34,5 +34,5 @@ class DoubleReturn(value: Double?): PrimitiveReturn<Double>(value) {
         return DoubleReturn(null).apply { type = ReturnValueType.Reference(newRef) }
     }
 
-    override fun createDummy() = DoubleReturn(null).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = DoubleReturn(null).apply { type = ReturnValueType.ParserOnly("dummy") }
 }
