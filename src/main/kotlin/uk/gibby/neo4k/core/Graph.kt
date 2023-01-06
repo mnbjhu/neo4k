@@ -70,7 +70,7 @@ class Graph(
                     basicAuth(username, password)
                     contentType(ContentType.Application.Json)
                     setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
-                }}
+                }.also { println(it.bodyAsText()) }}
                 emptyList()
             }
             else -> {

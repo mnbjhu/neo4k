@@ -28,6 +28,7 @@ import uk.gibby.neo4k.returns.primitives.DoubleReturn
 import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
 import java.io.File
+import kotlin.test.Ignore
 
 class SerializationTest {
      @Test
@@ -59,7 +60,6 @@ class SerializationTest {
         val parser = MultipleReturn2(ReturnValue.createReference(::StringReturn, "test"), ReturnValue.createReference(::DoubleReturn, "test"))
         Json.decodeFromString(parser.serializer, data) `should be equal to` ("Godfather, The" to 4.487499999999999)
     }
-
     @Test
     fun decodeData(){
 
@@ -69,6 +69,7 @@ class SerializationTest {
         Json.decodeFromString(parser, data)
     }
 
+    @Ignore
     @Test
     fun decodeRecord(){
         val data = File("C:\\Users\\james\\IdeaProjects\\neo4k\\src\\test\\resources\\response.json").readText()
@@ -76,7 +77,7 @@ class SerializationTest {
         val newParser = RecordParser(parser.serializer)
         Json.decodeFromString(newParser, data)
     }
-
+    @Ignore
     @Test
     fun decodeResultSet(){
         val data = File("C:\\Users\\james\\IdeaProjects\\neo4k\\.idea\\httpRequests\\2023-01-02T183145.200.json").readText()
