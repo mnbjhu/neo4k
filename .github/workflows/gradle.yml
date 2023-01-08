@@ -24,6 +24,7 @@ jobs:
           - 7474:7474
         env:
           NEO4J_AUTH: neo4j/myPassword123
+          NEO4J_ACCEPT_LICENSE_AGREEMENT: yes
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
