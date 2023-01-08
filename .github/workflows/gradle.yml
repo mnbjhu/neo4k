@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     services:
       neo4j:
-        image: neo4j
+        image: neo4j:4.4.16-enterprise
         ports:
           - 7474:7474
         env:
-          NEO4J_AUTH: test/test
+          NEO4J_AUTH: neo4j/myPassword123
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
