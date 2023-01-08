@@ -29,8 +29,8 @@ class MoviesTest {
     val graph = Graph(
         name = "neo4j",
         host = "localhost",
-        username = "test",
-        password = "test"
+        username = "neo4j",
+        password = "myPassword123"
     )
     @Test
     fun `Basic Test #1`(){

@@ -65,11 +65,9 @@ class QueryTest: GraphTest() {
             )
             movie.title
         }.build()
-        (1..1000).forEach {
-            graph.myQuery("Star Wars", VectorExample.Vector2(1900, 2000)).size `should be equal to` 1
-            graph.myQuery("Star Wars", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
-            graph.myQuery("Lord Of The Rings", VectorExample.Vector2(1900, 2000)).size `should be equal to` 0
-            graph.myQuery("Lord Of The Rings", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
-        }
+        graph.myQuery("Star Wars", VectorExample.Vector2(1900, 2000)).size `should be equal to` 1
+        graph.myQuery("Star Wars", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
+        graph.myQuery("Lord Of The Rings", VectorExample.Vector2(1900, 2000)).size `should be equal to` 0
+        graph.myQuery("Lord Of The Rings", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
     }
 }

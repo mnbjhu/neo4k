@@ -5,10 +5,10 @@ import uk.gibby.neo4k.core.Graph
 
 abstract class GraphTest {
     protected val graph = Graph(
-        name = this::class.qualifiedName!!.replace("_", ".").lowercase(),
+        name = this::class.qualifiedName!!.replace("_", ".").replace(".", "").lowercase(),
         host = "localhost",
-        username = "test",
-        password = "test"
+        username = "neo4j",
+        password = "myPassword123"
     )
     @BeforeEach
     fun clearGraph(){

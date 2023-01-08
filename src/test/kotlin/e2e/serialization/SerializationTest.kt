@@ -87,7 +87,7 @@ class SerializationTest {
     }
     @Test
     fun ktorSingleTest(){
-        val graph = Graph("neo4j", "test", "test", "localhost")
+        val graph = Graph("neo4j", "neo4j", "myPassword123", "localhost")
         val myQuery = query{
             val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
             val (title, averageRating, numberOfRatings) =
