@@ -7,9 +7,18 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
+import uk.gibby.neo4k.clauses.Limit.Companion.limit
 import uk.gibby.neo4k.clauses.Match.Companion.match
+import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
+import uk.gibby.neo4k.clauses.Where.Companion.where
+import uk.gibby.neo4k.clauses.WithAs.Companion.using
+import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
+import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.paths.`o-→`
+import uk.gibby.neo4k.paths.`←-o`
 import uk.gibby.neo4k.queries.Query0.Companion.query
+import uk.gibby.neo4k.queries.buildQuery
+import uk.gibby.neo4k.returns.many
 import util.GraphTest
 
 class QueryTest: GraphTest() {
@@ -43,4 +52,6 @@ class QueryTest: GraphTest() {
         graph.findMoviesContainingText("Star Wars").size `should be equal to` 1
         graph.findMoviesContainingText("Lord Of The Rings").size `should be equal to` 0
     } */
+
+
 }

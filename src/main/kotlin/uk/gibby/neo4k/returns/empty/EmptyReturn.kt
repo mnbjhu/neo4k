@@ -11,10 +11,6 @@ abstract class EmptyReturn: ReturnValue<Unit>() {
         throw Exception("Return is empty")
     }
 
-    override fun parse(value: Any?) {
-        throw Exception("Return is empty")
-    }
-
     override fun encode(value: Unit): ReturnValue<Unit> {
         throw Exception("Return is empty")
     }

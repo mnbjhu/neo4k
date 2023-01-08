@@ -1,8 +1,6 @@
 package util
 
 import org.junit.jupiter.api.BeforeEach
-import org.neo4j.driver.AuthTokens
-import org.neo4j.driver.GraphDatabase
 import uk.gibby.neo4k.core.Graph
 
 abstract class GraphTest {

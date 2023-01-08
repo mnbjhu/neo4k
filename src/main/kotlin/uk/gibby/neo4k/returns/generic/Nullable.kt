@@ -2,16 +2,10 @@ package uk.gibby.neo4k.returns.generic
 
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.KSerializer
-import org.neo4j.driver.internal.value.NullValue
 import uk.gibby.neo4k.returns.NotNull
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.Box
 import uk.gibby.neo4k.returns.util.ReturnValueType
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.withNullability
 
 /**
  * Nullable return
@@ -27,11 +21,6 @@ class Nullable<T: Any, U: NotNull<T>>(private val value: Box<U>, private val dum
     override fun getStructuredString() = when(value){
         is Box.WithoutValue -> "NULL"
         is Box.WithValue -> value.value.getString()
-    }
-    override fun parse(value: Any?): T? {
-
-        return if (value != null && value !is NullValue) dummy.parse(value)
-        else null
     }
     override fun createReference(newRef: String): Nullable<T, U>{
         return Nullable(Box.WithoutValue, dummy).also { type = ReturnValueType.Reference(newRef) }

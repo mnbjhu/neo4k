@@ -2,7 +2,6 @@ package uk.gibby.neo4k.returns.generic
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
-import org.neo4j.driver.internal.value.ListValue
 import uk.gibby.neo4k.core.NameCounter
 import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.Referencable
@@ -41,10 +40,6 @@ class ArrayReturn<T, U: ReturnValue<T>>(private val values: Box<List<U>>, intern
             is Box.WithValue -> values.value.joinToString(prefix = "[", postfix = "]") { it.getString() }
             else -> throw java.lang.Exception("IDE BUG")
         }
-    }
-    override fun parse(value: Any?): List<T> {
-        val list = try { (value as ListValue).asList() } catch (_: ClassCastException){ (value as List<*>) }
-        return list.map { inner.parse(it) }
     }
 
     override fun createReference(newRef: String): ArrayReturn<T, U>  = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.Reference(newRef) }

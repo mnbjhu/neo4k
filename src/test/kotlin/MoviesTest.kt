@@ -1,6 +1,4 @@
 import org.junit.jupiter.api.Test
-import org.neo4j.driver.AuthTokens
-import org.neo4j.driver.GraphDatabase
 import uk.gibby.neo4k.clauses.Limit.Companion.limit
 import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
@@ -8,17 +6,15 @@ import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.Graph
 import uk.gibby.neo4k.core.invoke
-import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
-import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.not
 import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
-import uk.gibby.neo4k.functions.conditions.primitive.eq
-import uk.gibby.neo4k.functions.conditions.primitive.exists
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.plus
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.paths.`←-o`
+import uk.gibby.neo4k.queries.build
+import uk.gibby.neo4k.queries.buildQuery
+import uk.gibby.neo4k.queries.with
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.graph.entities.UnitDirectionalRelationship
 import uk.gibby.neo4k.returns.graph.entities.UnitNode
@@ -79,6 +75,19 @@ class MoviesTest {
             limit(25)
             many(title, averageRating)
         }.forEach { println(it) }
+    }
+    @Test
+    fun testNewQuery(){
+        val myQuery = buildQuery {
+            val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
+            many(movie.title, avg(userRating.rating), count(userRating))
+        }.with { (title, averageRating, numberOfRatings) ->
+            where(numberOfRatings greaterThan 100)
+            orderByDesc(averageRating)
+            limit(25)
+            many(title, averageRating)
+        }.build()
+        graph.myQuery().forEach { println(it) }
     }
 }
 

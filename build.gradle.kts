@@ -15,9 +15,7 @@ repositories {
 }
 
 dependencies {
-    api("redis.clients:jedis:4.3.1")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    api("org.neo4j.driver:neo4j-java-driver:5.3.0")
     api(kotlin("reflect"))
     testApi("com.natpryce:konfig:1.6.10.0")
     testApi(kotlin("test"))

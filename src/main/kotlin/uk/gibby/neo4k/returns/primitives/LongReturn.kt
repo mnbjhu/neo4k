@@ -2,10 +2,7 @@ package uk.gibby.neo4k.returns.primitives
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
-import org.neo4j.driver.internal.value.IntegerValue
-import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.ReturnValueType
-import java.lang.ClassCastException
 
 
 /**
@@ -20,12 +17,6 @@ import java.lang.ClassCastException
 class LongReturn(value: Long?): PrimitiveReturn<Long>(value) {
     override fun getPrimitiveString(from: Long): String = "$from"
     override fun encode(value: Long) = LongReturn(value)
-    override fun parse(value: Any?): Long {
-        try {
-            return super.parse(value)
-        } catch (_: ClassCastException){}
-        return (value as IntegerValue).asLong()
-    }
 
     override val serializer: KSerializer<Long>
         get() = Long.serializer()

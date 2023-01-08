@@ -12,10 +12,9 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import org.neo4j.driver.*
 import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
-import uk.gibby.neo4k.returns.SingleReturn
+import uk.gibby.neo4k.returns.SingleParser
 import uk.gibby.neo4k.returns.empty.EmptyReturn
 
 /**
@@ -59,8 +58,8 @@ class Graph(
     fun <T>query(queryBuilder: QueryScope.() -> ReturnValue<T>): List<T>{
         val scope = QueryScope()
         val returnValue = scope.queryBuilder()
-        val resultParser = if(returnValue is MultipleReturn) ResultSetParser(returnValue.serializer as KSerializer<T?>)
-            else ResultSetParser(SingleReturn(returnValue.serializer as KSerializer<T?>).serializer)
+        val resultParser = if(returnValue is MultipleReturn<*>) ResultSetParser(returnValue.serializer as KSerializer<T?>)
+            else ResultSetParser(SingleParser(returnValue.serializer as KSerializer<T?>).serializer)
         val queryString = if (returnValue is EmptyReturn) "${scope.getString()} ${scope.getAfterString()}"
         else "${scope.getString()} RETURN ${returnValue.getString()} ${scope.getAfterString()}"
         return when(returnValue){

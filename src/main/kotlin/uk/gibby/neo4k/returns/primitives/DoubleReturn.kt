@@ -2,12 +2,7 @@ package uk.gibby.neo4k.returns.primitives
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
-import org.neo4j.driver.internal.value.BooleanValue
-import org.neo4j.driver.internal.value.FloatValue
-import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.ReturnValueType
-import java.lang.ClassCastException
-import kotlin.reflect.jvm.internal.impl.resolve.constants.DoubleValue
 
 /**
  * Double return
@@ -22,11 +17,6 @@ import kotlin.reflect.jvm.internal.impl.resolve.constants.DoubleValue
 class DoubleReturn(value: Double?): PrimitiveReturn<Double>(value) {
     override fun getPrimitiveString(from: Double): String = "$from"
     override fun encode(value: Double) = DoubleReturn(value)
-    override fun parse(value: Any?): Double {
-        try { return super.parse(value) } catch (_: ClassCastException){}
-        return (value as FloatValue).asDouble()
-    }
-
     override val serializer: KSerializer<Double>
         get() = Double.serializer()
 

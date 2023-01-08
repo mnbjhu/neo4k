@@ -1,6 +1,5 @@
 package uk.gibby.neo4k.returns.primitives
 
-import org.neo4j.driver.internal.value.StringValue
 import uk.gibby.neo4k.returns.DataType
 
 /**
@@ -14,9 +13,5 @@ sealed class PrimitiveReturn<T>(private val value: T?): DataType<T>(){
     override fun getStructuredString() = when(value){
         null -> throw Exception("return_types.PrimitiveReturn cannot getStructuredString with out value set")
         else -> getPrimitiveString(value)
-    }
-
-    override fun parse(value: Any?): T {
-        return value as T
     }
 }

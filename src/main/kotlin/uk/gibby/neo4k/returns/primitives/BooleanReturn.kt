@@ -2,13 +2,7 @@ package uk.gibby.neo4k.returns.primitives
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import org.neo4j.driver.internal.value.BooleanValue
-import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.util.ReturnValueType
-import java.lang.ClassCastException
 
 /**
  * Boolean return
@@ -22,10 +16,6 @@ import java.lang.ClassCastException
 class BooleanReturn(value: Boolean?): PrimitiveReturn<Boolean>(value) {
     override fun getPrimitiveString(from: Boolean): String = "$from"
     override fun encode(value: Boolean) = BooleanReturn(value)
-    override fun parse(value: Any?): Boolean {
-        try { return super.parse(value) } catch (_: ClassCastException){}
-        return (value as BooleanValue).asBoolean()
-    }
 
     override val serializer: KSerializer<Boolean>
         get() = Boolean.serializer()

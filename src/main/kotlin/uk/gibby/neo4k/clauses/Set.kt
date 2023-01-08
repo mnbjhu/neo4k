@@ -15,7 +15,7 @@ import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
  * @property map A map from attributes to the values they should be set to
  * @constructor Creates a 'SET' claus
  */
-class Set(private val map: SetMap): Claus() {
+class Set(private val map: SetMap): Clause() {
     override fun getString(): String {
         return map.params.entries.joinToString(prefix = "SET ") { "${it.key.getString()} = ${it.value.getString()}" }
     }

@@ -6,7 +6,7 @@ import uk.gibby.neo4k.returns.MultipleReturn2
 import uk.gibby.neo4k.returns.MultipleReturn3
 import uk.gibby.neo4k.returns.ReturnValue
 
-class WithAs<U: ReturnValue<*>>(private val map: Map<U, U>) : Claus() {
+class WithAs<U: ReturnValue<*>>(private val map: Map<U, U>) : Clause() {
     constructor(vararg entries: Pair<U, U>): this(entries.toMap())
     override fun getString(): String {
         return map.toList().joinToString(prefix = "WITH ") {  "${it.first.getString()} AS ${it.second.getString() }" }

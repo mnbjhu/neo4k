@@ -2,10 +2,7 @@ package uk.gibby.neo4k.returns.primitives
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
-import org.neo4j.driver.internal.value.StringValue
 import uk.gibby.neo4k.returns.util.ReturnValueType
-import java.lang.ClassCastException
-import kotlin.reflect.jvm.internal.impl.resolve.constants.LongValue
 
 /**
  * String return
@@ -23,10 +20,6 @@ class StringReturn(value: String?): PrimitiveReturn<String>(value) {
         .replace("\\", "\\\\")
 
     override fun encode(value: String) = StringReturn(value)
-    override fun parse(value: Any?): String {
-        try { return super.parse(value) } catch (_: ClassCastException){}
-        return (value as StringValue).asString()
-    }
 
     override val serializer: KSerializer<String>
         get() = String.serializer()

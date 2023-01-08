@@ -15,7 +15,9 @@ import kotlin.reflect.full.createType
 
 infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createDummy(this).encode(value) as U
 
-class TypeProducer<T, U: ReturnValue<T>>(val inner: U)
+class TypeProducer<T, U: ReturnValue<T>>(val inner: U){
+    constructor(type: KFunction<U>): this(createDummy(type, "dummy"))
+}
 
 fun <T: Any, U: NotNull<T>>nullable(type: KFunction<U>) = TypeProducer(
     Nullable(Box.WithoutValue, createDummy(type))

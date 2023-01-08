@@ -112,6 +112,6 @@ class SerializationTest {
             limit(25)
             many(title, averageRating)
         }
-        println(query.execute(graph))
+        TODO() //println(query.execute(graph))
     }
 }

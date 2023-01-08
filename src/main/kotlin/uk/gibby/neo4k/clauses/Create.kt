@@ -14,7 +14,7 @@ import uk.gibby.neo4k.core.QueryScope
  * @property creatable The nodes or paths to create
  * @constructor Creates a 'CREATE' claus
  */
-class Create(private vararg val creatable: Creatable<*>): Claus(){
+class Create(private vararg val creatable: Creatable<*>): Clause(){
     override fun getString() = "CREATE ${creatable.joinToString { it.getCreateString() }}"
     companion object{
         /**

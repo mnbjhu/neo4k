@@ -16,7 +16,7 @@ import kotlin.reflect.KFunction
  * @property matchable The nodes or paths to create
  * @constructor Creates a 'CREATE' claus
  */
-class Match(private vararg val matchable: Matchable<*>): Claus(){
+class Match(private vararg val matchable: Matchable<*>): Clause(){
     override fun getString() = "MATCH ${matchable.joinToString { it.getMatchString() }}"
     companion object{
 

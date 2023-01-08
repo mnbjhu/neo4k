@@ -67,16 +67,6 @@ abstract class ReturnValue<T>{
     internal abstract fun getStructuredString(): String
 
     /**
-     * Parse
-     *
-     * Parses the response data as [T]
-     *
-     * @param value Response data
-     * @return The decoded response
-     */
-    internal abstract fun parse(value: Any?): T
-
-    /**
      * Encode
      *
      * Creates a structured representation ([ReturnValue]) from a decoded value ([T])
