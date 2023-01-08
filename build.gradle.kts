@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
     `maven-publish`
 }
 
@@ -10,16 +11,23 @@ version = "0.0.2-pre-release"
 
 repositories {
     mavenCentral()
+    uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
 
 dependencies {
-    api("redis.clients:jedis:4.3.1")
-    api("org.neo4j.driver:neo4j-java-driver:5.3.0")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     api(kotlin("reflect"))
+    api("io.ktor:ktor-client-core:2.2.1")
+    api("io.ktor:ktor-client-content-negotiation:2.2.1")
+    api("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
+    api("io.ktor:ktor-client-cio:2.2.1")
+    api("io.ktor:ktor-client-auth:2.2.1")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    api("io.ktor:ktor-client-logging:2.2.1")
     testApi("com.natpryce:konfig:1.6.10.0")
     testApi(kotlin("test"))
     testApi("org.amshove.kluent:kluent:1.72")
-
+    api("ch.qos.logback:logback-classic:1.4.5")
 }
 
 tasks.test {

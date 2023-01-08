@@ -15,7 +15,7 @@ import uk.gibby.neo4k.returns.graph.entities.Entity
  * @property toDelete The nodes or relations to delete
  * @constructor Creates a 'DELETE' claus
  */
-class Delete(private val toDelete: List<Entity<*>>): Claus() {
+class Delete(private val toDelete: List<Entity<*>>): Clause() {
     override fun getString(): String {
         return "DELETE ${toDelete.joinToString { it.getString() }}"
     }
@@ -38,7 +38,7 @@ class Delete(private val toDelete: List<Entity<*>>): Claus() {
             .also { addStatement(Delete(toDelete.toList())) }
     }
 }
-class DetachDelete(private val toDelete: List<Entity<*>>): Claus() {
+class DetachDelete(private val toDelete: List<Entity<*>>): Clause() {
     override fun getString(): String {
         return "DETACH DELETE ${toDelete.joinToString { it.getString() }}"
     }

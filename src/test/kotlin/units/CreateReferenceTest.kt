@@ -31,7 +31,10 @@ class HasOther: DirectionalRelationship<TestNode, TestNode, Unit>() {
     }
 }
 class TestReturn(val myString: Nullable<String, StringReturn>): StructReturn<String?>() {
-    override fun encode(value: String?) = TestReturn(myString[value])
+    override fun StructParamMap.encodeStruct(value: String?) {
+        myString[value]
+    }
+
     override fun ReturnScope.decode() = ::myString.result()
 }
 

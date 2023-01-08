@@ -1,6 +1,7 @@
 package uk.gibby.neo4k.returns.generic
 
-import org.neo4j.driver.internal.value.ListValue
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import uk.gibby.neo4k.core.NameCounter
 import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.Referencable
@@ -30,6 +31,9 @@ import kotlin.reflect.full.isSubtypeOf
  * @sample [e2e.types.Array.matchAttribute]
  */
 class ArrayReturn<T, U: ReturnValue<T>>(private val values: Box<List<U>>, internal val inner: U): DataType<List<T>>() {
+    override val serializer: KSerializer<List<T>>
+        get() = ListSerializer(inner.serializer)
+
     override fun getStructuredString(): String {
         return when(values){
             is Box.WithoutValue -> throw Exception("return_types.ArrayReturn cannot getStructuredString with out values set")
@@ -37,14 +41,10 @@ class ArrayReturn<T, U: ReturnValue<T>>(private val values: Box<List<U>>, intern
             else -> throw java.lang.Exception("IDE BUG")
         }
     }
-    override fun parse(value: Any?): List<T> {
-        val list = try { (value as ListValue).asList() } catch (_: ClassCastException){ (value as List<*>) }
-        return list.map { inner.parse(it) }
-    }
 
     override fun createReference(newRef: String): ArrayReturn<T, U>  = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.Reference(newRef) }
 
-    override fun createDummy() = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.ParserOnly }
+    override fun createDummy() = ArrayReturn(Box.WithoutValue, inner).apply { type = ReturnValueType.ParserOnly("inner") }
 
 
     override fun encode(value: List<T>): ArrayReturn<T, U> {

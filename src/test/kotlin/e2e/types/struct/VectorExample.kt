@@ -16,10 +16,10 @@ import util.GraphTest
 class VectorExample: GraphTest() {
     data class Vector2(val x: Long, val y: Long)
     class Vector2Return(val x: LongReturn, val y: LongReturn): StructReturn<Vector2>() {
-        override fun encode(value: Vector2) = Vector2Return(
-            ::LongReturn of value.x,
-            ::LongReturn of value.y
-        )
+        override fun StructParamMap.encodeStruct(value: Vector2) {
+            x[value.x]
+            y[value.y]
+        }
         override fun ReturnScope.decode() = Vector2(
             ::x.result(),
             ::y.result()

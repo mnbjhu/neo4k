@@ -1,9 +1,24 @@
 package uk.gibby.neo4k.core
 
-import org.neo4j.driver.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.SingleParser
 import uk.gibby.neo4k.returns.empty.EmptyReturn
+import uk.gibby.neo4k.returns.primitives.StringReturn
 
 /**
  * Graph
@@ -18,14 +33,24 @@ import uk.gibby.neo4k.returns.empty.EmptyReturn
  * @param password The database password
  */
 class Graph(
-    private val name: String,
-    host: String,
-    port: Int = 7687,
-    password: String? = null
+    internal val name: String,
+    val username: String,
+    val password: String,
+    val host: String
 ) {
-    internal val client = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("test", "test"))
-        .apply { session().executeWrite{ it.run("CREATE DATABASE $name IF NOT EXISTS") } }
-
+    private val client = HttpClient(CIO){
+        install(ContentNegotiation){
+            json()
+        }
+        install(Auth) {
+            basic {
+                credentials {
+                    BasicAuthCredentials(this@Graph.username, this@Graph.password)
+                }
+                realm = "Access to the '/' path"
+            }
+        }
+    }
     /**
      * Query
      *
@@ -35,59 +60,72 @@ class Graph(
      */
     fun <T>query(queryBuilder: QueryScope.() -> ReturnValue<T>): List<T>{
         val scope = QueryScope()
-        val result = scope.queryBuilder()
-        val queryStart = scope.getString()
-        val queryEnd = scope.getAfterString()
-        return when(result){
+        val returnValue = scope.queryBuilder()
+        val resultParser = if(returnValue is MultipleReturn<*>) ResultSetParser(returnValue.serializer as KSerializer<T?>)
+            else ResultSetParser(SingleParser(returnValue.serializer as KSerializer<T?>).serializer)
+        val queryString = if (returnValue is EmptyReturn) "${scope.getString()} ${scope.getAfterString()}"
+        else "${scope.getString()} RETURN ${returnValue.getString()} ${scope.getAfterString()}"
+        return when(returnValue){
             is EmptyReturn -> {
-                client.session(SessionConfig.forDatabase(name)).executeWrite {
-                    val query = Query("$queryStart $queryEnd")
-                    it.run(query)
-                }
+                runBlocking {
+                client.post("http://${host}:7474/db/${name}/tx/commit"){
+                    basicAuth(username, password)
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
+                }}
                 emptyList()
             }
             else -> {
-                client.session(SessionConfig.forDatabase(name)).executeWrite{
-                    val query = Query("$queryStart RETURN ${result.getString()} $queryEnd".also { println(it) })
-                    if(result is MultipleReturn) it.run(query).list { result.parse(it.values()) }
-                        else { it.run(query).list { result.parse(it.values().first()) } }
-                }
+                runBlocking {
+                    val response = client.post("http://${host}:7474/db/${name}/tx/commit"){
+                        basicAuth(username, password)
+                        contentType(ContentType.Application.Json)
+                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
+                    }
+                    val resultSet = Json.decodeFromString(resultParser, response.bodyAsText())
+                    resultSet.errors.forEach{
+                        throw it.getError()
+                    }
+                    resultSet.notifications.forEach {
+                        Neo4kLogger.info("{} {} {} {}", it.code, it.severity, it.title, it.description)
+                    }
+                    resultSet.data[0]
+                } as List<T>
             }
-    }
-    }/*
-    fun <T, U: ReturnValue<T>>queryUnion(vararg queries: QueryScope.() -> U): List<T>{
-        var result: U? = null
-        val fullQuery = queries.joinToString(" UNION "){ queryBuilder ->
-            val scope = QueryScope()
-            result = scope.queryBuilder()
-            val builtQuery = scope.getString()
-            "$builtQuery RETURN ${result!!.getString()} AS r"
         }
-        val response = client.graphQuery(name, fullQuery.also { println(it) })
-        return response.map { result!!.parse(it.values().first()) }
     }
-    fun <T, U: ReturnValue<T>>queryUnionAll(vararg queries: QueryScope.() -> U): List<T>{
-        var result: U? = null
-        val fullQuery = queries.joinToString(" UNION ALL "){ queryBuilder ->
-            val scope = QueryScope()
-            result = scope.queryBuilder()
-            val builtQuery = scope.getString()
-            "$builtQuery RETURN ${result!!.getString()} AS r"
-        }
-        val response = client.graphQuery(name, fullQuery.also { println(it) })
-        return response.map { result!!.parse(it.values().first()) }
-    }
-    */
-
+    suspend fun sendQuery(query: String, params: String) = client.post("http://${host}:7474/db/${name}/tx/commit"){
+        basicAuth(username, password)
+        contentType(ContentType.Application.Json)
+        setBody("{\"statements\" : [{\"statement\": \"$query\", \"parameters\": {$params}}]}")
+    }.bodyAsText()
     /**
      * Delete
      *
      * Deletes the graph (graph by name: [name])
      */
     fun delete(){
-        client.session(SessionConfig.forDatabase(name)).executeWrite{
-            val query = Query("MATCH (n) DETACH DELETE n")
-            it.run(query)
+        runBlocking {
+            client.post("http://${host}:7474/db/${name}/tx/commit"){
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody("{\"statements\" : [{\"statement\": \"MATCH (n) DETACH DELETE n\"}]}")
+            }
         }
     }
+    fun create(){
+        runBlocking {
+            val response = client.post("http://${host}:7474/db/neo4j/tx/commit"){
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody("{\"statements\" : [{\"statement\": \"CREATE DATABASE $name IF NOT EXISTS\"}]}")
+            }.bodyAsText()
+            Json.decodeFromString(ResultSetParser(ReturnValue.createDummy(::StringReturn).serializer), response).apply {
+                notifications.forEach { Neo4kLogger.info("{} {} {} {}", it.code, it.severity, it.title, it.description) }
+                errors.forEach { throw it.getError() }
+            }
+        }
+    }
+
 }
+

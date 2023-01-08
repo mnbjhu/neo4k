@@ -13,14 +13,16 @@ import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.full.createType
 
-infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createInstance(this, value)
+infix fun <T, U: ReturnValue<T>>KFunction<U>.of(value: T): U = createDummy(this).encode(value) as U
 
-class TypeProducer<T, U: ReturnValue<T>>(val inner: U)
+class TypeProducer<T, U: ReturnValue<T>>(val inner: U){
+    constructor(type: KFunction<U>): this(createDummy(type, "dummy"))
+}
 
-fun <T, U: NotNull<T>>nullable(type: KFunction<U>) = TypeProducer(
+fun <T: Any, U: NotNull<T>>nullable(type: KFunction<U>) = TypeProducer(
     Nullable(Box.WithoutValue, createDummy(type))
 )
-inline fun <reified T, U: NotNull<T>>nullable(type: TypeProducer<T, U>) = TypeProducer(
+inline fun <reified T: Any, U: NotNull<T>>nullable(type: TypeProducer<T, U>) = TypeProducer(
     Nullable(Box.WithoutValue, type.inner)
 )
 

@@ -5,7 +5,7 @@ import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 
-class Unwind<T, U: ReturnValue<T>>(private val array: ArrayReturn<T, U>, private val element: U): Claus(){
+class Unwind<T, U: ReturnValue<T>>(private val array: ArrayReturn<T, U>, private val element: U): Clause(){
     override fun getString(): String {
         return "UNWIND ${array.getString()} AS ${element.getString()}"
     }

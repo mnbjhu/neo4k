@@ -4,7 +4,7 @@ import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.of
 import uk.gibby.neo4k.returns.primitives.LongReturn
 
-class Skip(private val count: LongReturn): Claus(){
+class Skip(private val count: LongReturn): Clause(){
     constructor(long: Long): this(::LongReturn of long)
     override fun getString(): String {
         return "SKIP ${count.getString()}"

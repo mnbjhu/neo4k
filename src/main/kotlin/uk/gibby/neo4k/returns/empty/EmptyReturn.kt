@@ -1,13 +1,13 @@
 package uk.gibby.neo4k.returns.empty
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import uk.gibby.neo4k.returns.ReturnValue
 
 abstract class EmptyReturn: ReturnValue<Unit>() {
-    override fun getStructuredString(): String {
-        throw Exception("Return is empty")
-    }
 
-    override fun parse(value: Any?) {
+    override val serializer: KSerializer<Unit> = Unit.serializer()
+    override fun getStructuredString(): String {
         throw Exception("Return is empty")
     }
 

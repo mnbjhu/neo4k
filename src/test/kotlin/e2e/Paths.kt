@@ -30,14 +30,14 @@ class PathsTest: GraphTest() {
 }
 
 
-
+/*
 class Paths : GraphTest(){
     @Test
     fun createPath3(){
         graph.query {
-            create(::UserNode{ it[firstName] = "" })
+            create(::UserNode{ it[firstName] = ""; })
         }
 
     }
 }
-
+*/

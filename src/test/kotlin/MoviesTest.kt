@@ -7,16 +7,16 @@ import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.Graph
 import uk.gibby.neo4k.core.invoke
 import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
-import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.not
 import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
-import uk.gibby.neo4k.functions.conditions.primitive.eq
-import uk.gibby.neo4k.functions.conditions.primitive.exists
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.plus
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.paths.`←-o`
+import uk.gibby.neo4k.queries.build
+import uk.gibby.neo4k.queries.query
+import uk.gibby.neo4k.queries.with
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.graph.entities.UnitDirectionalRelationship
 import uk.gibby.neo4k.returns.graph.entities.UnitNode
@@ -26,7 +26,12 @@ import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
 
 class MoviesTest {
-    val graph = Graph("neo4j", "bolt://localhost", 6379)
+    val graph = Graph(
+        name = "neo4j",
+        host = "localhost",
+        username = "neo4j",
+        password = "myPassword123"
+    )
     @Test
     fun `Basic Test #1`(){
         graph.query {
@@ -40,7 +45,7 @@ class MoviesTest {
         graph.query {
             val (actor, _, movie) = match(::Actor `o-→` ::ActedIn `o-→` ::Movie `←-o` ::ActedIn `←-o` ::Actor{it[name]="Hugh Laurie"})
             limit(2500)
-            actor.name + " acted in " + movie.title+ " with Hugh Laurie"
+            actor.name + " acted in " + movie.title + " with Hugh Laurie"
         }.forEach { println(it) }
     }
 
@@ -73,7 +78,44 @@ class MoviesTest {
             many(title, averageRating)
         }.forEach { println(it) }
     }
+    @Test
+    fun testNewQuery(){
+        val myQuery = query {
+            val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
+            many(movie.title, avg(userRating.rating), count(userRating))
+        }.with { (title, averageRating, numberOfRatings) ->
+            where(numberOfRatings greaterThan 100)
+            orderByDesc(averageRating)
+            limit(25)
+            many(title, averageRating)
+        }.build()
+        graph.myQuery().forEach { println(it) }
+    }
+
+    @Test
+    fun testNewQueryWithTwoParams(){
+        val findSharedMovies = query(::StringReturn, ::StringReturn){ first, _ ->
+            val actor = match(::Actor)
+            where(actor.name contains first)
+            actor
+        }.with{ actor, (_, second) ->
+            val (_, _, movie, _, actor2) = match(actor `o-→` ::ActedIn `o-→` ::Movie `←-o` ::ActedIn `←-o` ::Actor)
+            where(actor2.name contains second)
+            movie
+        }.with { movie ->
+            val (user, review) = match(::User `o-→` ::Rated `o-→` movie)
+            many(movie.title, count(user), avg(review.rating))
+        }.with { (title, numReviews, avgRating) ->
+            where(numReviews greaterThan 20)
+            orderByDesc(avgRating)
+            limit(10)
+            title
+        }.build()
+        graph.findSharedMovies("Ryder", "Reeves").forEach { println(it) }
+    }
 }
+
+
 
 class Movie(
     val countries: ArrayReturn<String, StringReturn>,

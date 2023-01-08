@@ -4,7 +4,7 @@ import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.of
 import uk.gibby.neo4k.returns.primitives.LongReturn
 
-class Limit(private val count: LongReturn): Claus(){
+class Limit(private val count: LongReturn): Clause(){
     constructor(long: Long): this(::LongReturn of long)
     override fun getString(): String {
         return "LIMIT ${count.getString()}"
