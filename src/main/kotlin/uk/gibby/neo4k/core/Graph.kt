@@ -97,7 +97,7 @@ class Graph(
     suspend fun sendQuery(query: String, params: String) = client.post("http://${host}:7474/db/${name}/tx/commit"){
         basicAuth(username, password)
         contentType(ContentType.Application.Json)
-        setBody("{\"statements\" : [{\"statement\": \"$query\", \"parameters\": {$params}}]}")
+        setBody("{\"statements\" : [{\"statement\": \"$query\", \"parameters\": {$params}}]}".also { println(it) })
     }.bodyAsText()
     /**
      * Delete
@@ -120,8 +120,10 @@ class Graph(
                 contentType(ContentType.Application.Json)
                 setBody("{\"statements\" : [{\"statement\": \"CREATE DATABASE $name IF NOT EXISTS\"}]}")
             }.bodyAsText()
-            Json.decodeFromString(ResultSetParser(ReturnValue.createDummy(::StringReturn).serializer), response)
-                .errors.forEach { throw it.getError() }
+            Json.decodeFromString(ResultSetParser(ReturnValue.createDummy(::StringReturn).serializer), response).apply {
+                notifications.forEach { Neo4kLogger.info("{} {} {} {}", it.code, it.severity, it.title, it.description) }
+                errors.forEach { throw it.getError() }
+            }
         }
     }
 

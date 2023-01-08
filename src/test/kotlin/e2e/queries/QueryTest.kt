@@ -18,6 +18,7 @@ import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.queries.build
 import uk.gibby.neo4k.queries.query
+import uk.gibby.neo4k.queries.query1
 import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
 import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
@@ -44,7 +45,7 @@ class QueryTest: GraphTest() {
 
     @Test
     fun testQueryWithOneParam(){
-        val findMoviesContainingText = query(::StringReturn) { searchText ->
+        val findMoviesContainingText = query1 { searchText: StringReturn ->
             val movie = match(::Movie)
             where(movie.title contains searchText)
             movie.title

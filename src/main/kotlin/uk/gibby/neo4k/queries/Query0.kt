@@ -7,6 +7,8 @@ import uk.gibby.neo4k.returns.*
 import uk.gibby.neo4k.returns.empty.EmptyReturn
 import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
 import kotlin.reflect.KFunction
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 fun <p, P: ReturnValue<p>, r, R: ReturnValue<r>, N, M: ReturnValue<N>>QueryBuilder<p, P, r, R>.with(nextBuilder: QueryScope.(R) -> M): QueryBuilder<p, P, N, M>{
      return QueryBuilder(args) {
@@ -39,6 +41,14 @@ fun <a, A: Single<a>, r, R: ReturnValue<r>>query(first: TypeProducer<a, A>, buil
     return QueryBuilder(param0){
         builder(it)
     }
+}
+inline fun <a, reified A: Single<a>, r, R: ReturnValue<r>>query1(noinline builder: QueryScope.(A) -> R): QueryBuilder<a, A, r, R>{
+    return query(typeOf<A>(), builder)
+}
+fun <a, A: Single<a>, r, R: ReturnValue<r>>query(first: KType, builder: QueryScope.(A) -> R): QueryBuilder<a, A, r, R>{
+    val type = TypeProducer(ReturnValue.createDummy(first, "dummy") as A)
+    return query(type, builder)
+
 }
 fun <a, A: Single<a>, r, R: ReturnValue<r>>query(first: KFunction<A>, builder: QueryScope.(A) -> R): QueryBuilder<a, A, r, R> = query(TypeProducer(first), builder)
 fun <a, A: Single<a>, r, R: ReturnValue<r>>QueryBuilder<a,A,r, R>.build(): Graph.(a) -> List<r>{

@@ -6,9 +6,11 @@ import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.Graph
 import uk.gibby.neo4k.core.invoke
+import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
 import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
+import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.functions.conditions.primitive.string_return.plus
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.paths.`←-o`
@@ -43,7 +45,7 @@ class MoviesTest {
         graph.query {
             val (actor, _, movie) = match(::Actor `o-→` ::ActedIn `o-→` ::Movie `←-o` ::ActedIn `←-o` ::Actor{it[name]="Hugh Laurie"})
             limit(2500)
-            actor.name + " acted in " + movie.title+ " with Hugh Laurie"
+            actor.name + " acted in " + movie.title + " with Hugh Laurie"
         }.forEach { println(it) }
     }
 
@@ -89,7 +91,31 @@ class MoviesTest {
         }.build()
         graph.myQuery().forEach { println(it) }
     }
+
+    @Test
+    fun testNewQueryWithTwoParams(){
+        val findSharedMovies = query(::StringReturn, ::StringReturn){ first, _ ->
+            val actor = match(::Actor)
+            where(actor.name contains first)
+            actor
+        }.with{ actor, (_, second) ->
+            val (_, _, movie, _, actor2) = match(actor `o-→` ::ActedIn `o-→` ::Movie `←-o` ::ActedIn `←-o` ::Actor)
+            where(actor2.name contains second)
+            movie
+        }.with { movie ->
+            val (user, review) = match(::User `o-→` ::Rated `o-→` movie)
+            many(movie.title, count(user), avg(review.rating))
+        }.with { (title, numReviews, avgRating) ->
+            where(numReviews greaterThan 20)
+            orderByDesc(avgRating)
+            limit(10)
+            title
+        }.build()
+        graph.findSharedMovies("Ryder", "Reeves").forEach { println(it) }
+    }
 }
+
+
 
 class Movie(
     val countries: ArrayReturn<String, StringReturn>,

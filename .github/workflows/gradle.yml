@@ -18,10 +18,12 @@ jobs:
 
     runs-on: ubuntu-latest
     services:
-      redis:
-        image: redis/redis-stack:latest
+      neo4j:
+        image: neo4j
         ports:
-          - 6379:6379
+          - 7474:7474
+        env:
+          NEO4J_AUTH: test/test
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
