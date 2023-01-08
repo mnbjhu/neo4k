@@ -5,17 +5,20 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import uk.gibby.neo4k.returns.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.SingleParser
 import uk.gibby.neo4k.returns.empty.EmptyReturn
+import uk.gibby.neo4k.returns.primitives.StringReturn
 
 /**
  * Graph
@@ -69,7 +72,7 @@ class Graph(
                     basicAuth(username, password)
                     contentType(ContentType.Application.Json)
                     setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
-                }.also { println(it.bodyAsText()) }}
+                }}
                 emptyList()
             }
             else -> {
@@ -77,9 +80,16 @@ class Graph(
                     val response = client.post("http://${host}:7474/db/${name}/tx/commit"){
                         basicAuth(username, password)
                         contentType(ContentType.Application.Json)
-                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}".also { println(it) })
+                        setBody("{\"statements\" : [{\"statement\" : \"$queryString\"}]}")
                     }
-                    Json.decodeFromString(resultParser, response.bodyAsText().also { println(it) })[0]
+                    val resultSet = Json.decodeFromString(resultParser, response.bodyAsText())
+                    resultSet.errors.forEach{
+                        throw it.getError()
+                    }
+                    resultSet.notifications.forEach {
+                        Neo4kLogger.info("{} {} {} {}", it.code, it.severity, it.title, it.description)
+                    }
+                    resultSet.data[0]
                 } as List<T>
             }
         }
@@ -103,30 +113,17 @@ class Graph(
             }
         }
     }
-
-           /*
-    fun <T, U: ReturnValue<T>>queryUnion(vararg queries: QueryScope.() -> U): List<T>{
-        var result: U? = null
-        val fullQuery = queries.joinToString(" UNION "){ queryBuilder ->
-            val scope = QueryScope()
-            result = scope.queryBuilder()
-            val builtQuery = scope.getString()
-            "$builtQuery RETURN ${result!!.getString()} AS r"
+    fun create(){
+        runBlocking {
+            val response = client.post("http://${host}:7474/db/neo4j/tx/commit"){
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody("{\"statements\" : [{\"statement\": \"CREATE DATABASE $name IF NOT EXISTS\"}]}")
+            }.bodyAsText()
+            Json.decodeFromString(ResultSetParser(ReturnValue.createDummy(::StringReturn).serializer), response)
+                .errors.forEach { throw it.getError() }
         }
-        val response = client.graphQuery(name, fullQuery.also { println(it) })
-        return response.map { result!!.parse(it.values().first()) }
     }
-    fun <T, U: ReturnValue<T>>queryUnionAll(vararg queries: QueryScope.() -> U): List<T>{
-        var result: U? = null
-        val fullQuery = queries.joinToString(" UNION ALL "){ queryBuilder ->
-            val scope = QueryScope()
-            result = scope.queryBuilder()
-            val builtQuery = scope.getString()
-            "$builtQuery RETURN ${result!!.getString()} AS r"
-        }
-        val response = client.graphQuery(name, fullQuery.also { println(it) })
-        return response.map { result!!.parse(it.values().first()) }
-    }
-    */
 
 }
+

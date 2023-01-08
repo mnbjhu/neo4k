@@ -45,64 +45,8 @@ data class SingleParser<a: Any?, out A: KSerializer<a?>>(val inner: A){
      }
 }
 
-object MultipleReturn0: MultipleReturn<MultipleReturn0> {
-    override fun getList(): List<ReturnValue<*>> {
-        return listOf()
-    }
 
-    override fun parseList(values: List<ReturnValue<*>>): MultipleReturn0 {
-        return this
-    }
-}
-
-data class MultipleReturn1<a, A: ReturnValue<a>>(val first: A): ReturnValue<a>(), MultipleReturn<MultipleReturn1<a, A>>{
-    override val serializer: KSerializer<a> by lazy { object: KSerializer<a> {
-        override val descriptor = serialDescriptor<JsonArray>()
-
-        override fun deserialize(decoder: Decoder): a {
-            var f: a? = null
-            val composite = decoder.beginStructure(descriptor)
-            while (true){
-                when(composite.decodeElementIndex(descriptor)){
-                    DECODE_DONE -> break
-                    0 -> f = composite.decodeSerializableElement(descriptor, 0, first.serializer)
-                }
-            }
-            composite.endStructure(descriptor)
-            return f!!
-        }
-
-        override fun serialize(encoder: Encoder, value: a){
-            val composite = encoder.beginStructure(descriptor)
-            composite.encodeSerializableElement(descriptor, 0, first.serializer, value)
-            composite.endStructure(descriptor)
-        }
-
-    }}
-
-    override fun getStructuredString(): String = first.getString()
-
-    override fun createReference(newRef: String): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-    override fun createDummy(): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-    override fun encode(value: a): ReturnValue<a> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getList(): List<ReturnValue<*>> {
-        return listOf(first)
-    }
-
-    override fun parseList(values: List<ReturnValue<*>>): MultipleReturn1<a, A> {
-        return MultipleReturn1(values.first() as A)
-    }
-}
-data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first: A, val second: B): ReturnValue<Pair<a, b>>(), MultipleReturn<MultipleReturn2<a, A, b, B>> {
+data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first: A, val second: B): Multiple<Pair<a, b>>(), MultipleReturn<MultipleReturn2<a, A, b, B>> {
         override val serializer: KSerializer<Pair<a, b>> by lazy { object: KSerializer<Pair<a, b>> {
         override val descriptor = serialDescriptor<JsonArray>()
 
@@ -155,7 +99,7 @@ data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first
     }
 }
 
-data class MultipleReturn3<a, A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: ReturnValue<c>>(val first: A, val second: B, val third: C): ReturnValue<Triple<a, b, c>>(), MultipleReturn<MultipleReturn3<a, A, b, B, c, C>> {
+data class MultipleReturn3<a, A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: ReturnValue<c>>(val first: A, val second: B, val third: C): Multiple<Triple<a, b, c>>(), MultipleReturn<MultipleReturn3<a, A, b, B, c, C>> {
     override val serializer: KSerializer<Triple<a, b, c>> by lazy {
         object: KSerializer<Triple<a, b, c>> {
             override val descriptor = serialDescriptor<JsonArray>()

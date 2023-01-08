@@ -13,7 +13,7 @@ import uk.gibby.neo4k.functions.conditions.primitive.string_return.plus
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.paths.`←-o`
 import uk.gibby.neo4k.queries.build
-import uk.gibby.neo4k.queries.buildQuery
+import uk.gibby.neo4k.queries.query
 import uk.gibby.neo4k.queries.with
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.graph.entities.UnitDirectionalRelationship
@@ -78,7 +78,7 @@ class MoviesTest {
     }
     @Test
     fun testNewQuery(){
-        val myQuery = buildQuery {
+        val myQuery = query {
             val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
             many(movie.title, avg(userRating.rating), count(userRating))
         }.with { (title, averageRating, numberOfRatings) ->

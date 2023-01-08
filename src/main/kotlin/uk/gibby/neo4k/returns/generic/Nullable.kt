@@ -4,6 +4,7 @@ import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.KSerializer
 import uk.gibby.neo4k.returns.NotNull
 import uk.gibby.neo4k.returns.ReturnValue
+import uk.gibby.neo4k.returns.Single
 import uk.gibby.neo4k.returns.util.Box
 import uk.gibby.neo4k.returns.util.ReturnValueType
 
@@ -15,7 +16,7 @@ import uk.gibby.neo4k.returns.util.ReturnValueType
  * @sample [e2e.types.primitive.String.createNullLiteral]
  * @sample [e2e.types.Array.createNullLiteral]
  */
-class Nullable<T: Any, U: NotNull<T>>(private val value: Box<U>, private val dummy: U): ReturnValue<T?>() {
+class Nullable<T: Any, U: NotNull<T>>(private val value: Box<U>, private val dummy: U): Single<T?>() {
     override val serializer: KSerializer<T?> = dummy.serializer.nullable
 
     override fun getStructuredString() = when(value){

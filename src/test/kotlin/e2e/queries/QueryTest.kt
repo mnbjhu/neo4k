@@ -3,22 +3,23 @@ import uk.gibby.neo4k.core.invoke
 import e2e.schemas.ActedIn
 import e2e.schemas.Actor
 import e2e.schemas.Movie
+import e2e.types.struct.VectorExample
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
-import uk.gibby.neo4k.clauses.Limit.Companion.limit
 import uk.gibby.neo4k.clauses.Match.Companion.match
-import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
 import uk.gibby.neo4k.clauses.Where.Companion.where
-import uk.gibby.neo4k.clauses.WithAs.Companion.using
-import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
+import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
+import uk.gibby.neo4k.functions.conditions.primitive.eq
+import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
+import uk.gibby.neo4k.functions.conditions.primitive.long_return.lessThan
+import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
 import uk.gibby.neo4k.paths.`o-→`
-import uk.gibby.neo4k.paths.`←-o`
-import uk.gibby.neo4k.queries.Query0.Companion.query
-import uk.gibby.neo4k.queries.buildQuery
-import uk.gibby.neo4k.returns.many
+import uk.gibby.neo4k.queries.build
+import uk.gibby.neo4k.queries.query
+import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
+import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
 
 class QueryTest: GraphTest() {
@@ -36,22 +37,38 @@ class QueryTest: GraphTest() {
         val myQuery = query {
             val movie = match(::Movie)
             movie.title
-        }
+        }.build()
         val movies = graph.myQuery()
         movies `should be equal to` listOf("Star Wars: Episode V - The Empire Strikes Back")
     }
 
-    /*
     @Test
     fun testQueryWithOneParam(){
         val findMoviesContainingText = query(::StringReturn) { searchText ->
             val movie = match(::Movie)
             where(movie.title contains searchText)
             movie.title
-        }
+        }.build()
         graph.findMoviesContainingText("Star Wars").size `should be equal to` 1
         graph.findMoviesContainingText("Lord Of The Rings").size `should be equal to` 0
-    } */
+    }
 
-
+    @Test
+    fun queryWithTwoParams(){
+        val myQuery = query(::StringReturn, VectorExample::Vector2Return) { searchText, yearRange ->
+            val movie = match(::Movie)
+            where(
+                (movie.title contains searchText) and
+                (movie.releaseYear lessThan yearRange.y) and
+                (movie.releaseYear greaterThan yearRange.x)
+            )
+            movie.title
+        }.build()
+        (1..1000).forEach {
+            graph.myQuery("Star Wars", VectorExample.Vector2(1900, 2000)).size `should be equal to` 1
+            graph.myQuery("Star Wars", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
+            graph.myQuery("Lord Of The Rings", VectorExample.Vector2(1900, 2000)).size `should be equal to` 0
+            graph.myQuery("Lord Of The Rings", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
+        }
+    }
 }

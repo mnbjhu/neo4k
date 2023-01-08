@@ -19,11 +19,10 @@ import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
 import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
 import uk.gibby.neo4k.paths.`←-o`
-import uk.gibby.neo4k.queries.Query0
-import uk.gibby.neo4k.queries.Query0.Companion.query
+import uk.gibby.neo4k.queries.build
+import uk.gibby.neo4k.queries.query
 import uk.gibby.neo4k.returns.MultipleReturn2
 import uk.gibby.neo4k.returns.ReturnValue
-import uk.gibby.neo4k.returns.many
 import uk.gibby.neo4k.returns.primitives.DoubleReturn
 import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
@@ -97,21 +96,8 @@ class SerializationTest {
             orderByDesc(averageRating)
             limit(25)
             title
-        }
+        }.build()
         println(graph.myQuery())
     }
-    @Test
-    fun ktorBasic(){
-        val graph = Graph("neo4j", "test", "test", "localhost")
-        val query = Query0{
-            val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
-            val (title, averageRating, numberOfRatings) =
-                using(movie.title, avg(userRating.rating), count(userRating))
-            where(numberOfRatings greaterThan 100)
-            orderByDesc(averageRating)
-            limit(25)
-            many(title, averageRating)
-        }
-        TODO() //println(query.execute(graph))
-    }
+
 }

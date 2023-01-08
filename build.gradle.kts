@@ -17,15 +17,17 @@ repositories {
 dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     api(kotlin("reflect"))
-    testApi("com.natpryce:konfig:1.6.10.0")
-    testApi(kotlin("test"))
-    testApi("org.amshove.kluent:kluent:1.72")
     api("io.ktor:ktor-client-core:2.2.1")
     api("io.ktor:ktor-client-content-negotiation:2.2.1")
     api("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
     api("io.ktor:ktor-client-cio:2.2.1")
     api("io.ktor:ktor-client-auth:2.2.1")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    api("io.ktor:ktor-client-logging:2.2.1")
+    testApi("com.natpryce:konfig:1.6.10.0")
+    testApi(kotlin("test"))
+    testApi("org.amshove.kluent:kluent:1.72")
+    api("ch.qos.logback:logback-classic:1.4.5")
 }
 
 tasks.test {

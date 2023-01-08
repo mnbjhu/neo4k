@@ -48,7 +48,7 @@ abstract class ReturnValue<T>{
      * @throws Exception If the ReturnValue is a parser only
      */
     internal fun getString() = when(type){
-        is ReturnValueType.ParserOnly -> throw Exception("Cannot call getString, instance is parser only")
+        is ReturnValueType.ParserOnly -> (type as ReturnValueType.ParserOnly).name
         is ReturnValueType.Reference -> (type as ReturnValueType.Reference).ref
         is ReturnValueType.Instance -> getStructuredString()
     }
@@ -115,7 +115,7 @@ abstract class ReturnValue<T>{
                                 KTypeProjection.STAR,
                                 KTypeProjection(KVariance.OUT, NotNull::class.createType(listOf(KTypeProjection.STAR)))))))
                             throw Exception("Attributes can only be return_types.NotNull or return_types.Nullable<return_types.NotNull>")
-                        createReference(it.type, it.name!!)
+                        createDummy(it.type, it.name!!)
                     }
                     (constructor.callBy(params) as ReturnValue<*>).apply { this.type = ReturnValueType.ParserOnly(name) }
                 }
@@ -169,7 +169,7 @@ abstract class ReturnValue<T>{
         }
 
         internal fun <T, U: ReturnValue<T>>createDummy(type: KFunction<U>, name: String = "dummy"): U{
-                return (createDummy(type.returnType, name) as U).also { dummyCache[type.toString()] = it }
+                return (createDummy(type.returnType, name) as U)
         }
 
         internal fun <T, U: ReturnValue<T>>createReference(type: KFunction<U>, ref: String): U{

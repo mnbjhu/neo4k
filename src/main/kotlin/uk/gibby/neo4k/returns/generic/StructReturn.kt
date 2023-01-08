@@ -38,10 +38,11 @@ abstract class StructReturn<T>: DataType<T>(){
 
         override fun serialize(encoder: Encoder, value: T) {
             val params = StructParamMap()
-            params.encodeStruct(value)
+            with(createDummy()){
+                params.encodeStruct(value)
+            }
             val values = params.getList()
             encoder.beginStructure(descriptor).apply{
-
                 values.forEachIndexed { index, any ->
                     encodeSerializableElement(descriptor, index, elements[index].second.serializer as KSerializer<Any?>, (any.second))
                 }
