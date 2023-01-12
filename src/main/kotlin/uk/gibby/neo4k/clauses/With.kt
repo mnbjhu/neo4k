@@ -13,16 +13,19 @@ class WithAs<U: ReturnValue<*>>(private val map: Map<U, U>) : Clause() {
         return map.toList().joinToString(prefix = "WITH ") {  "${it.first.getString()} AS ${it.second.getString() }" }
     }
     companion object{
+        @Deprecated("Use 'with' instead")
         fun <U: ReturnValue<*>> QueryScope.using(value: U): U =
             (value.createReference(NameCounter.next()) as U).also { addStatement(WithAs(value to it)) }
 
 
+        @Deprecated("Use 'with' instead")
         fun <u, U: ReturnValue<u>, v, V: ReturnValue<v>> QueryScope.using(first: U, second: V): MultipleReturn2<u, U, v, V>{
             val firstNewRef = first.createReference(NameCounter.next()) as U
             val secondNewRef = second.createReference(NameCounter.next()) as V
             addStatement(WithAs(first to firstNewRef, second to secondNewRef))
             return MultipleReturn2(firstNewRef, secondNewRef)
         }
+        @Deprecated("Use 'with' instead")
         fun <a, A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: ReturnValue<c>>QueryScope.using(first: A, second: B, third: C): MultipleReturn3<a, A, b, B, c, C>{
             val firstNewRef = first.createReference(NameCounter.next()) as A
             val secondNewRef = second.createReference(NameCounter.next()) as B

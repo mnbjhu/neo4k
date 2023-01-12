@@ -3,15 +3,11 @@ package uk.gibby.neo4k.returns.graph.entities
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
 import uk.gibby.neo4k.returns.NotNull
 import uk.gibby.neo4k.returns.ReturnValue
-import uk.gibby.neo4k.returns.generic.StructReturn
 import uk.gibby.neo4k.returns.util.ReturnScope
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
@@ -24,7 +20,6 @@ sealed class Entity<T>: NotNull<T>(){
         .map { it.name to (it.call(this) as ReturnValue<*>) }
     }
     val indexMap by lazy{ elements.mapIndexed { index, pair -> pair.second to index }.toMap() }
-    @OptIn(ExperimentalSerializationApi::class)
     override val serializer: KSerializer<T> by lazy { object : KSerializer<T>{
         override val descriptor = buildClassSerialDescriptor(this@Entity::class.simpleName!!){
             elements.forEach {
@@ -47,9 +42,9 @@ sealed class Entity<T>: NotNull<T>(){
             composite.endStructure(descriptor)
                 return ReturnScope(map).decode()
         }
+
         override fun serialize(encoder: Encoder, value: T) {
             // TODO:
-
         }
 
     }}
