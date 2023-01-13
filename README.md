@@ -14,16 +14,17 @@ Inspired by Kotlin Exposed, this library aims to provide a type-safe cypher DSL 
 ### Example
 
 ```kotlin
-val myQuery = query {
-    val (movie, userRating) = match(::Movie `←-o` ::Rated `←-o` ::User)
-    many(movie.title, avg(userRating.rating), count(userRating))
-}.with { (title, averageRating, numberOfRatings) ->
-    where(numberOfRatings greaterThan 100)
+
+val findBestRatedMovies = query {
+    val (movie, review) = match(::Movie `←-o` ::Reviewed `←-o` ::User)
+    many(movie.title, avg(review.rating), count(review))
+}.with { (title, averageRating, numberOfReviews) ->
+    where(numberOfReviews greaterThan 100)
     orderByDesc(averageRating)
     limit(25)
     many(title, averageRating)
 }.build()
-graph.myQuery().forEach { println(it) /* it: Pair<String, Double> */ }
+graph.findBestRatedMovies().forEach { println(it) /* it: Pair<String, Double> */ }
 ```
 
 ## Setup
@@ -66,18 +67,24 @@ dependencies {
 }
 ```
 
-### Connect to neo4j
+# Connect to neo4j
+To connect to your database, you create an instance of 'Graph':
+```kotlin
+val graph = Graph(
+    name = "neo4j",
+    username = "Username",
+    password = "Password123!",
+    host = "localhost"
+)
 ```
-val graph = Graph("neo4j", "Username", "Password123!", "localhost")
-```
 
-### Build a schema
-Neo4k is a schemafull wrapper for neo4j, which lets you benefit from Kotlin's type system when writing your queries.
+# Build a schema
+To take advantage of Kotlin's type safety, neo4k requires you to build a schema.
 
-You can define nodes by extending either the UnitNode or the Node class. 
-
+You can define nodes by extending either the UnitNode or the Node class.  
+## Nodes
 #### UnitNode
-A UnitNode is just a node which can't be returned directly from a query.
+
 ```kotlin
 class Movie(
     val title: StringReturn,
@@ -85,6 +92,7 @@ class Movie(
 ): UnitNode()
 ```
 #### Node\<T>
+A UnitNode is just a node which can't be returned directly from a query. 
 ```kotlin
 data class MovieData(val title: String, val releaseYear: Long)
 
@@ -99,28 +107,28 @@ class Movie(
 }
 ```
 
-#### Relationships
+## Relationships
 
 You can create relationships by extending the DirectionalRelationship or NonDirectionalRelationship classes or their Unit equivalent.
-##### Directional Relationships
-Directional relationships take two type arguments: the from type and the to type.
+### Directional Relationships
+Directional relationships take two type arguments: the 'from' type and the 'to' type.
 ```kotlin
 class ActedIn(val role: StringReturn): UnitDirectionalRelationship<Actor, Movie>()
 ```
 
-##### Non-Directional Relationships
+### Non-Directional Relationships
 On the other hand non-directional only require one type argument 
 ```kotlin
 class FriendsWith: UnitNonDirectionalRelationship<User>()
 ```
 
-### Construct and execute queries
+# Construct and execute queries
 
 Queries can either be executed directly by calling the 'query' function:
 ```kotlin
 graph.query {
-    val (_, _, movie) = create(::Actor{ it[name] = "Mark Hamill" } `o-→` ::ActedIn{ it[role] = "Luke Skywalker" } `o-→`
-            ::Movie{ it[title] = "Star Wars: Episode V - The Empire Strikes Back"; it[releaseYear] = 1980 })
+    val movie = create(::Movie{ it[title] = "Star Wars: Episode V - The Empire Strikes Back"; it[releaseYear] = 1980 })
+    create(::Actor{ it[name] = "Mark Hamill" } `o-→` ::ActedIn{ it[role] = "Luke Skywalker" } `o-→` movie)
     create(::Actor{ it[name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[role] = "Princess Leia" } `o-→` movie)
     create(::Actor{ it[name] = "Harrison Ford" } `o-→` ::ActedIn{ it[role] = "Han Solo" } `o-→` movie)
 }
@@ -135,7 +143,20 @@ val findActorsInMovie = query(::StringReturn) { searchString ->
 }.build()
 val actorNames = graph.findActorsInMovie("Star Wars") 
 ```
-The latter creates the query string and the relevant serializers and de-serializers when 'build' is called: making the query much more efficient.
+The latter creates the query string and the relevant serializers when 'build' is called: making the query much more efficient.
 In this example we have a parameter of 'searchString'. Parameterizing queries (rather than constructing them at execution time) makes it easier for neo4j to cache the execution plan, which also makes it faster 🔥.  
+```kotlin
+val findBestRatedMovies = query {
+    val (movie, review) = match(::Movie `←-o` ::Reviewed `←-o` ::User)
+    many(movie.title, avg(review.rating), count(review))
+}.with { (title, averageRating, numberOfReviews) ->
+    where(numberOfReviews greaterThan 100)
+    orderByDesc(averageRating)
+    limit(25)
+    many(title, averageRating)
+}.build()
+graph.findBestRatedMovies().forEach { println(it) }
+```
 
-Arrays in neo4j aren't typed which doesn't have of plac
+You can chain queries together using the 'with' function which parses on the return of the previous query.
+
