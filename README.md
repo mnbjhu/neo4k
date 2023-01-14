@@ -67,7 +67,7 @@ dependencies {
 }
 ```
 
-# Connect to neo4j
+# Connect to Neo4j
 To connect to your database, you create an instance of 'Graph':
 ```kotlin
 val graph = Graph(
@@ -81,7 +81,9 @@ val graph = Graph(
 # Build a schema
 To take advantage of Kotlin's type safety, neo4k requires you to build a schema.
 
-You can define nodes by extending either the UnitNode or the Node class.  
+You can define nodes by extending either the UnitNode or the Node class and by defining its attributes as values in the primary constructor.
+These values should all be instances of ReturnValue<T>:  
+
 ## Nodes
 #### UnitNode
 
@@ -106,6 +108,17 @@ class Movie(
     )
 }
 ```
+Currently supported types are:
+
+| Name     | Class                                 | Type Descriptor               | Return Type    |
+|----------|---------------------------------------|-------------------------------|----------------|
+| Long     | LongReturn                            | ::LongReturn                  | kotlin.Long    |
+| Boolean  | BooleanReturn                         | ::BooleanReturn               | kotlin.Boolean |
+| String   | StringReturn                          | ::StringReturn                | kotlin.String  |
+| Double   | DoubleReturn                          | ::DoubleReturn                | kotlin.Double  |
+| Nullable | NullableReturn<T, U: ReturnValue\<T>> | nullable{ /* Inner */ }       | T?             |
+| Arrays   | ArrayReturn<T, U: ReturnValue\<T>>    | array{ /* Inner */ }          | List\<T>       |
+| Structs  | StructReturn<T, U: ReturnValue\<T>>   | ::MyStruct (see StructReturn) | T              |  
 
 ## Relationships
 
@@ -123,10 +136,45 @@ class FriendsWith: UnitNonDirectionalRelationship<User>()
 ```
 
 # Construct and execute queries
+### Paths
+Once you have built a schema it can be used to query your graph.
+You can describe your nodes and relationships using their constructor reference:
+
+With no constraints:
+`::Movie`,`::ActedIn`
+
+With constrains:
+```kotlin
+import uk.gibby.neo4k.core.invoke // THIS WILL NOT IMPORT AUTOMATICALLY
+
+::Movie{ it[title] = "Pulp Fiction" }
+```
+You can then use the arrow functions: \`o-→\`, \`←-o\` \`-o-\` ('o' was added for autocomplete) to describe paths:
+
+```kotlin
+::Actor `o-→` ::ActedIn `o-→` ::Movie{ it[title] = "Pulp Fiction" }
+```
+Path are currently supported upto a length of ten (not including ranged relation matches).
+
+### Queries
+#### QueryScope
+Queries are written within a lambda with the QueryScope class as the receiver.
+This provides you with a set of functions which correspond to the clauses from neo4j.
+The currently supported clauses are:
+* CREATE
+* DELETE
+* LIMIT
+* MATCH
+* ORDER BY
+* SET
+* SKIP
+* UNWIND
+* WHERE
+* WITH (See below)
 
 Queries can either be executed directly by calling the 'query' function:
 ```kotlin
-graph.query {
+graph.query { // this: QueryScope
     val movie = create(::Movie{ it[title] = "Star Wars: Episode V - The Empire Strikes Back"; it[releaseYear] = 1980 })
     create(::Actor{ it[name] = "Mark Hamill" } `o-→` ::ActedIn{ it[role] = "Luke Skywalker" } `o-→` movie)
     create(::Actor{ it[name] = "Carrie Fisher" } `o-→` ::ActedIn{ it[role] = "Princess Leia" } `o-→` movie)
@@ -155,8 +203,8 @@ val findBestRatedMovies = query {
     limit(25)
     many(title, averageRating)
 }.build()
-graph.findBestRatedMovies().forEach { println(it) }
+graph.findBestRatedMovies() // List<Pair<String, Double>>
 ```
 
-You can chain queries together using the 'with' function which parses on the return of the previous query.
+You can chain queries together using the 'with' function which passes on the return of the previous query. 
 

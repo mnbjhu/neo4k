@@ -10,7 +10,7 @@ import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.core.invoke
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
+import uk.gibby.neo4k.functions.string_return.contains
 import uk.gibby.neo4k.paths.`o-→`
 import util.GraphTest
 

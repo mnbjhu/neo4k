@@ -1,4 +1,4 @@
-package uk.gibby.neo4k.functions.conditions.primitive
+package uk.gibby.neo4k.functions
 
 import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.core.Matchable

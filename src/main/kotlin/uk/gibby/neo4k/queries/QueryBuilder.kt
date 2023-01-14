@@ -3,7 +3,7 @@ package uk.gibby.neo4k.queries
 import kotlinx.serialization.KSerializer
 import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.ResultSetParser
-import uk.gibby.neo4k.returns.MultipleReturn
+import uk.gibby.neo4k.returns.multiple.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.SingleParser
 import uk.gibby.neo4k.returns.empty.EmptyReturn

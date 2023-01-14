@@ -10,16 +10,17 @@ import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.clauses.Where.Companion.where
-import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
-import uk.gibby.neo4k.functions.conditions.primitive.eq
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.lessThan
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
+import uk.gibby.neo4k.functions.boolean_return.and
+import uk.gibby.neo4k.functions.eq
+import uk.gibby.neo4k.functions.long_return.greaterThan
+import uk.gibby.neo4k.functions.long_return.lessThan
+import uk.gibby.neo4k.functions.string_return.contains
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.queries.build
 import uk.gibby.neo4k.queries.query
 import uk.gibby.neo4k.queries.query1
 import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
+import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
 
@@ -69,5 +70,23 @@ class QueryTest: GraphTest() {
         graph.myQuery("Star Wars", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
         graph.myQuery("Lord Of The Rings", VectorExample.Vector2(1900, 2000)).size `should be equal to` 0
         graph.myQuery("Lord Of The Rings", VectorExample.Vector2(2000, 2100)).size `should be equal to` 0
+    }
+
+    @Test
+    fun bulkTest(){
+        val myQuery = query(::LongReturn) { count ->
+            val movie = create(::Movie{it[title] = "Test Movie"; it[releaseYear] = count})
+            movie
+        }.build()
+        for (i in 1.. 1000L){
+            graph.myQuery(i)
+        }
+    }
+
+    @Test
+    fun threeParamQuery(){
+        val myQuery = query(::StringReturn, ::LongReturn, ::LongReturn) { text, bottom, top ->
+            EmptyReturnInstance
+        }
     }
 }

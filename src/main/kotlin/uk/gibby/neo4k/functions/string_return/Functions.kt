@@ -1,4 +1,4 @@
-package uk.gibby.neo4k.functions.conditions.primitive.string_return
+package uk.gibby.neo4k.functions.string_return
 
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.generic.ArrayReturn
