@@ -2,13 +2,10 @@ package uk.gibby.neo4k.core
 
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.ReturnValue.Companion.createDummy
-import uk.gibby.neo4k.returns.ReturnValue.Companion.createInstance
 import uk.gibby.neo4k.returns.graph.entities.Entity
 import uk.gibby.neo4k.returns.graph.entities.Node
-import uk.gibby.neo4k.returns.graph.entities.DirectionalRelationship
 import uk.gibby.neo4k.returns.graph.entities.Relationship
 import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 
 sealed class ParamMap<out U: Entity<*>>(protected val type: KType){
