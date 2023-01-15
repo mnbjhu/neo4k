@@ -1,4 +1,4 @@
-package uk.gibby.neo4k.functions.conditions.primitive.double_return
+package uk.gibby.neo4k.functions.double_return
 
 import uk.gibby.neo4k.returns.ReturnValue.Companion.createReference
 import uk.gibby.neo4k.returns.primitives.BooleanReturn

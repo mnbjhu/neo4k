@@ -1,4 +1,4 @@
-package uk.gibby.neo4k.functions.conditions.primitive.array_return
+package uk.gibby.neo4k.functions.array_return
 
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.generic.ArrayReturn
@@ -17,14 +17,21 @@ fun <U: ArrayReturn<*, *>>isEmpty(array: U) = ReturnValue.createReference(::Bool
 
 fun <U: ArrayReturn<*, *>>reverse(original: U) = original.createReference("reverse(${original.getString()})") as U
 
-fun range(start: LongReturn, end: LongReturn, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},${end.getString()},${step})") as ArrayReturn<Long, LongReturn>
-fun range(start: LongReturn, end: Long, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},$end,$step)") as ArrayReturn<Long, LongReturn>
-fun range(start: Long, end: LongReturn, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: LongReturn, end: LongReturn, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range(${start.getString()},${end.getString()},${step})") as ArrayReturn<Long, LongReturn>
+fun range(start: LongReturn, end: Long, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range(${start.getString()},$end,$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: Long, end: LongReturn, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range($start,${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
 fun range(start: Long, end: Long, step: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,$end,$step)") as ArrayReturn<Long, LongReturn>
-fun range(start: LongReturn, end: LongReturn, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
-fun range(start: LongReturn, end: Long, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},$end,$step)") as ArrayReturn<Long, LongReturn>
-fun range(start: Long, end: LongReturn, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
-fun range(start: Long, end: Long, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,$end,$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: LongReturn, end: LongReturn, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range(${start.getString()},${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: LongReturn, end: Long, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range(${start.getString()},$end,$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: Long, end: LongReturn, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range($start,${end.getString()},$step)") as ArrayReturn<Long, LongReturn>
+fun range(start: Long, end: Long, step: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(
+    intArrayType, "range($start,$end,$step)") as ArrayReturn<Long, LongReturn>
 
 fun range(start: LongReturn, end: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},${end.getString()})") as ArrayReturn<Long, LongReturn>
 fun range(start: LongReturn, end: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},$end)") as ArrayReturn<Long, LongReturn>

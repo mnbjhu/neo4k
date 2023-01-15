@@ -7,12 +7,12 @@ import uk.gibby.neo4k.core.QueryScope
 /**
  * Create
  *
- * Represents the 'CREATE' claus from the CypherQL
+ * Represents the 'CREATE' clause from the CypherQL
  *
  * [Neo4j Cypher Manual](https://neo4j.com/docs/cypher-manual/current/clauses/create/)
  *
  * @property creatable The nodes or paths to create
- * @constructor Creates a 'CREATE' claus
+ * @constructor Creates a 'CREATE' clause
  */
 class Create(private vararg val creatable: Creatable<*>): Clause(){
     override fun getString() = "CREATE ${creatable.joinToString { it.getCreateString() }}"

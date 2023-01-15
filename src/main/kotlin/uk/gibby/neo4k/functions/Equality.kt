@@ -1,4 +1,4 @@
-package uk.gibby.neo4k.functions.conditions.primitive
+package uk.gibby.neo4k.functions
 
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.primitives.BooleanReturn

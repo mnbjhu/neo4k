@@ -8,7 +8,7 @@ import uk.gibby.neo4k.returns.graph.entities.Entity
 /**
  * Delete
  *
- * Represents the 'DELETE' claus from the CypherQL
+ * Represents the 'DELETE' clause from the CypherQL
  *
  * [Neo4j Cypher Manual](https://neo4j.com/docs/cypher-manual/current/clauses/delete/)
  *
@@ -29,7 +29,7 @@ class Delete(private val toDelete: List<Entity<*>>): Clause() {
          * [Neo4j Cypher Manual](https://neo4j.com/docs/cypher-manual/current/clauses/delete/)
          *
          * @param toDelete The nodes or relations to delete
-         * @return An empty return so queries can end with this claus
+         * @return An empty return so queries can end with this clause
          * @sample [e2e.clauses.Delete.deleteNode]
          * @sample [e2e.clauses.Delete.deleteRelation]
          * @see [QueryScope]
@@ -52,7 +52,7 @@ class DetachDelete(private val toDelete: List<Entity<*>>): Clause() {
          * [Neo4j Cypher Manual](https://neo4j.com/docs/cypher-manual/current/clauses/delete/)
          *
          * @param toDelete The nodes or relations to delete
-         * @return An empty return so queries can end with this claus
+         * @return An empty return so queries can end with this clause
          * @sample [e2e.clauses.Delete.deleteNode]
          * @sample [e2e.clauses.Delete.deleteRelation]
          * @see [QueryScope]

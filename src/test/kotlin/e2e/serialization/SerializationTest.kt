@@ -15,13 +15,13 @@ import uk.gibby.neo4k.clauses.OrderBy.Companion.orderByDesc
 import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.*
-import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
+import uk.gibby.neo4k.functions.double_return.avg
+import uk.gibby.neo4k.functions.long_return.count
+import uk.gibby.neo4k.functions.long_return.greaterThan
 import uk.gibby.neo4k.paths.`←-o`
 import uk.gibby.neo4k.queries.build
 import uk.gibby.neo4k.queries.query
-import uk.gibby.neo4k.returns.MultipleReturn2
+import uk.gibby.neo4k.returns.multiple.MultipleReturn2
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.primitives.DoubleReturn
 import uk.gibby.neo4k.returns.primitives.LongReturn

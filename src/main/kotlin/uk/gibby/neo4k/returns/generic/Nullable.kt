@@ -3,8 +3,7 @@ package uk.gibby.neo4k.returns.generic
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.KSerializer
 import uk.gibby.neo4k.returns.NotNull
-import uk.gibby.neo4k.returns.ReturnValue
-import uk.gibby.neo4k.returns.Single
+import uk.gibby.neo4k.returns.multiple.Single
 import uk.gibby.neo4k.returns.util.Box
 import uk.gibby.neo4k.returns.util.ReturnValueType
 

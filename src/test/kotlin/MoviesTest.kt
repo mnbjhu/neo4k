@@ -6,12 +6,11 @@ import uk.gibby.neo4k.clauses.Where.Companion.where
 import uk.gibby.neo4k.clauses.WithAs.Companion.using
 import uk.gibby.neo4k.core.Graph
 import uk.gibby.neo4k.core.invoke
-import uk.gibby.neo4k.functions.conditions.primitive.boolean_return.and
-import uk.gibby.neo4k.functions.conditions.primitive.double_return.avg
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.count
-import uk.gibby.neo4k.functions.conditions.primitive.long_return.greaterThan
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.contains
-import uk.gibby.neo4k.functions.conditions.primitive.string_return.plus
+import uk.gibby.neo4k.functions.double_return.avg
+import uk.gibby.neo4k.functions.long_return.count
+import uk.gibby.neo4k.functions.long_return.greaterThan
+import uk.gibby.neo4k.functions.string_return.contains
+import uk.gibby.neo4k.functions.string_return.plus
 import uk.gibby.neo4k.paths.`o-→`
 import uk.gibby.neo4k.paths.`←-o`
 import uk.gibby.neo4k.queries.build
@@ -20,7 +19,7 @@ import uk.gibby.neo4k.queries.with
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.graph.entities.UnitDirectionalRelationship
 import uk.gibby.neo4k.returns.graph.entities.UnitNode
-import uk.gibby.neo4k.returns.many
+import uk.gibby.neo4k.returns.multiple.many
 import uk.gibby.neo4k.returns.primitives.DoubleReturn
 import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn

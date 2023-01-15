@@ -12,9 +12,8 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import uk.gibby.neo4k.returns.MultipleReturn
+import uk.gibby.neo4k.returns.multiple.MultipleReturn
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.SingleParser
 import uk.gibby.neo4k.returns.empty.EmptyReturn
