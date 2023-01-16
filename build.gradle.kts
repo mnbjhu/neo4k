@@ -28,6 +28,8 @@ dependencies {
     testApi(kotlin("test"))
     testApi("org.amshove.kluent:kluent:1.72")
     api("ch.qos.logback:logback-classic:1.4.5")
+
+    implementation("org.neo4j.driver:neo4j-java-driver:5.4.0")
 }
 
 tasks.test {

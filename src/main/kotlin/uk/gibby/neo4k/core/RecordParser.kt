@@ -52,7 +52,7 @@ class DataParser<T, U: KSerializer<T>>(private val result: U): KSerializer<T> {
             when(context.decodeElementIndex(descriptor)){
                 0 -> r = context.decodeSerializableElement(descriptor, 0, result)
                 DECODE_DONE -> break
-                else -> { context.decodeSerializableElement(descriptor, 1, listKSerializer) }
+                else -> { println(context.decodeSerializableElement(descriptor, 1, listKSerializer)) }
             }
         }
         context.endStructure(descriptor)
