@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
     `maven-publish`
+    signing
 }
 
 group = "uk.gibby.krg"
@@ -37,11 +38,12 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "uk.gibby.krg"
-            artifactId = "KotlinRedisGraph"
+            groupId = "uk.gibby"
+            artifactId = "neo4k"
             version = "0.0.1-alpha"
             from(components["java"])
         }
