@@ -13,7 +13,7 @@ import kotlin.reflect.KFunction
 
 
 data class NeoPath4<A: ReturnValue<*>, B: ReturnValue<*>, C: ReturnValue<*>, D: ReturnValue<*>, E: ReturnValue<*>, F: ReturnValue<*>, G: ReturnValue<*>>(
-    val first: A, val firstToSecond: B, val second: C, val secondToThird: D, val third: E, val thirdToFourth: F, val fourth: G, val ref: String
+    val first: A, val firstToSecond: B, val second: C, val secondToThird: D, val third: E, val thirdToFourth: F, val fourth: G, internal val ref: String
 ): EmptyReturn()
 
 class NeoMatchablePath4<A: Node<*>, B: Relationship<*, *, *>, C: Node<*>, D: Relationship<*, *, *>, E: Node<*>, F: Relationship<*, *, *>, G: Node<*>>(
