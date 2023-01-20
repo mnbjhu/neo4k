@@ -45,7 +45,7 @@ allprojects {
 Step 2. Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.mnbjhu:neo4k:0.0.1'
+    implementation 'com.github.mnbjhu:neo4k:0.0.1-alpha'
 }
 ```
 
@@ -63,7 +63,7 @@ allprojects {
 Step 2. Add the dependency
 ```kotlin
 dependencies {
-    implementation("com.github.mnbjhu:neo4k:0.0.1")
+    implementation("com.github.mnbjhu:neo4k:0.0.1-alpha")
 }
 ```
 
