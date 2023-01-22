@@ -33,9 +33,10 @@ import uk.gibby.neo4k.returns.primitives.StringReturn
  */
 class Graph(
     internal val name: String,
-    val username: String,
-    val password: String,
-    val host: String
+    internal val username: String,
+    internal val password: String,
+    internal val host: String,
+    internal val logRequests: Boolean = false
 ) {
     private val client = HttpClient(CIO){
         install(ContentNegotiation){

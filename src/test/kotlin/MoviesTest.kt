@@ -112,7 +112,21 @@ class MoviesTest {
         }.build()
         graph.findSharedMovies("Ryder", "Reeves").forEach { println(it) }
     }
+    @Test
+    fun readme(){
+        graph.findBestRatedMovies()
+
+    }
 }
+val findBestRatedMovies = query {
+    val (movie, review) = match(::Movie `←-o` ::Rated `←-o` ::User)
+    many(movie.title, avg(review.rating), count(review))
+}.with { (title, averageRating, numberOfReviews) ->
+    where(numberOfReviews greaterThan 100)
+    orderByDesc(averageRating)
+    limit(25)
+    many(title, averageRating)
+}.build()
 
 
 

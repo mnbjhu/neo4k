@@ -1,5 +1,8 @@
 package uk.gibby.neo4k.functions.array_return
 
+import uk.gibby.neo4k.core.TypeProducer
+import uk.gibby.neo4k.core.array
+import uk.gibby.neo4k.returns.DataType
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.primitives.BooleanReturn
@@ -37,3 +40,5 @@ fun range(start: LongReturn, end: LongReturn): ArrayReturn<Long, LongReturn> = R
 fun range(start: LongReturn, end: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range(${start.getString()},$end)") as ArrayReturn<Long, LongReturn>
 fun range(start: Long, end: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,${end.getString()})") as ArrayReturn<Long, LongReturn>
 fun range(start: Long, end: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,$end)") as ArrayReturn<Long, LongReturn>
+
+fun <T, U: DataType<T>>collect(expression: U) = array(TypeProducer(expression.createDummy())).inner.createReference("collect(${expression.getString()})")
