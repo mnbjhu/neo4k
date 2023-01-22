@@ -4,4 +4,4 @@ import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.graph.entities.Entity
 import uk.gibby.neo4k.returns.primitives.LongReturn
 
-fun elementId(of: Entity<*>) = ReturnValue.createReference(::LongReturn, "elementId(${of.getString()})")
+fun id(of: Entity<*>) = ReturnValue.createReference(::LongReturn, "ID(${of.getString()})")
