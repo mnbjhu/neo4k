@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "uk.gibby.krg"
-version = "0.0.1-alpha"
+version = "0.0.2-alpha"
 
 repositories {
     mavenCentral()
@@ -42,7 +42,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "uk.gibby.krg"
             artifactId = "KotlinRedisGraph"
-            version = "0.0.1-alpha"
+            version = "0.0.2-alpha"
             from(components["java"])
         }
     }
