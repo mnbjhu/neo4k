@@ -29,7 +29,7 @@ inline fun <reified T: Any, U: NotNull<T>>nullable(type: TypeProducer<T, U>) = T
 fun <T, U: NotNull<T>>array(type: KFunction<U>) = TypeProducer(
     ArrayReturn(Box.WithoutValue, createDummy(type.returnType) as U)
 )
-inline fun <reified T, U: ReturnValue<T>>array(type: TypeProducer<T, U>) = TypeProducer(
+fun <T, U: ReturnValue<T>>array(type: TypeProducer<T, U>) = TypeProducer(
     ArrayReturn(Box.WithoutValue, type.inner)
 )
 

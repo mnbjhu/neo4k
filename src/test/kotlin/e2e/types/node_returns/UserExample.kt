@@ -5,7 +5,9 @@ import e2e.schemas.UserNode
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
+import uk.gibby.neo4k.clauses.Match.Companion.match
 import uk.gibby.neo4k.core.invoke
+import uk.gibby.neo4k.functions.elementId
 import util.GraphTest
 
 class UserExample: GraphTest() {
@@ -18,5 +20,17 @@ class UserExample: GraphTest() {
                 it[password] = "Password123"
             })
         } `should be equal to` listOf(User("Test", "User", "Password123"))
+    }
+
+    @Test
+    fun idTest(){
+        graph.query {
+            val node = create(::UserNode{
+                it[firstName] = "Test"
+                it[surname] = "User"
+                it[password] = "Password123"
+            })
+            elementId(node)
+        }.first() `should be equal to` 0L
     }
 }

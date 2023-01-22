@@ -4,12 +4,15 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import uk.gibby.neo4k.clauses.Create.Companion.create
 import uk.gibby.neo4k.clauses.Match.Companion.match
+import uk.gibby.neo4k.clauses.Unwind.Companion.unwind
 import uk.gibby.neo4k.core.array
 import uk.gibby.neo4k.core.invoke
 import uk.gibby.neo4k.core.nullable
 import uk.gibby.neo4k.core.of
+import uk.gibby.neo4k.functions.array_return.collect
 import uk.gibby.neo4k.returns.generic.ArrayReturn
 import uk.gibby.neo4k.returns.graph.entities.UnitNode
+import uk.gibby.neo4k.returns.primitives.LongReturn
 import uk.gibby.neo4k.returns.primitives.StringReturn
 import util.GraphTest
 
@@ -55,5 +58,14 @@ class ArrayFunctionsTest: GraphTest() {
         edgeCases.forEach {
             graph.query { nullable(::StringReturn) of it } `should be equal to` listOf(it)
         }
+    }
+
+    @Test
+    fun testCollect(){
+        val myList = listOf(1L, 2L, 3L)
+        graph.query {
+            val element = unwind(array(::LongReturn) of myList)
+            collect(element)
+        }.first() `should be equal to` myList
     }
 }
