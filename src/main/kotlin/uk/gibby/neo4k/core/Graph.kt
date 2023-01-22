@@ -36,7 +36,7 @@ class Graph(
     internal val username: String,
     internal val password: String,
     internal val host: String,
-    internal val logRequests: Boolean
+    internal val logRequests: Boolean = false
 ) {
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
