@@ -41,4 +41,4 @@ fun range(start: LongReturn, end: Long): ArrayReturn<Long, LongReturn> = ReturnV
 fun range(start: Long, end: LongReturn): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,${end.getString()})") as ArrayReturn<Long, LongReturn>
 fun range(start: Long, end: Long): ArrayReturn<Long, LongReturn> = ReturnValue.createReference(intArrayType, "range($start,$end)") as ArrayReturn<Long, LongReturn>
 
-fun <T, U: DataType<T>>collect(expression: U) = array(TypeProducer(expression.createDummy())).inner.createReference("collect(${expression.getString()})")
+fun <T, U: DataType<T>>collect(expression: U): ArrayReturn<T, U> = array(TypeProducer(expression.createDummy())).inner.createReference("collect(${expression.getString()})") as ArrayReturn<T, U>
