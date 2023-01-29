@@ -32,7 +32,7 @@ data class MultipleReturn5<a,  A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: Re
                     }
                 }
                 composite.endStructure(descriptor)
-                return Vec(p1!!, p2!!, p3!!, p4!!, p5!!)
+                return Vec(p1 as a, p2 as b, p3 as c, p4 as d, p5 as e)
             }
 
             override fun serialize(encoder: Encoder, value: Vec<a, b, c, d, e>) {

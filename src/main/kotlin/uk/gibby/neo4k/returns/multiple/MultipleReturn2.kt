@@ -25,7 +25,7 @@ data class MultipleReturn2<a, A: ReturnValue<a>, b, B: ReturnValue<b>>(val first
                 }
             }
             composite.endStructure(descriptor)
-            return f!! to s!!
+            return f as a to s as b
         }
 
         override fun serialize(encoder: Encoder, value: Pair<a, b>) {
