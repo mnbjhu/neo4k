@@ -2,8 +2,10 @@ package uk.gibby.neo4k.clauses
 
 
 import uk.gibby.neo4k.core.QueryScope
+import uk.gibby.neo4k.returns.NotNull
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
+import uk.gibby.neo4k.returns.generic.Nullable
 
 /**
  * Delete
@@ -45,5 +47,6 @@ class Set(private val map: SetMap): Clause() {
     class SetMap(internal val params: MutableMap<ReturnValue<*>, ReturnValue<*>> = mutableMapOf()){
         infix fun <T, U: ReturnValue<T>>U.to(value: T) { params[this] = encode(value) }
         infix fun <T, U: ReturnValue<T>>U.to(value: U) { params[this] = value }
+        infix fun <T: Any, U: NotNull<T>>Nullable<T, U>.to(value: U) { params[this] = value }
     }
 }
