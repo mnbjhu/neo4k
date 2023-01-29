@@ -13,3 +13,7 @@ interface Referencable<out T>{
     val ref: String
     fun getReference(): T
 }
+interface OptionalReferencable<out T>{
+    val optionalRef: String
+    fun getOptionalReference(): T
+}

@@ -3,6 +3,7 @@ package uk.gibby.neo4k.paths
 import uk.gibby.neo4k.core.*
 import uk.gibby.neo4k.returns.ReturnValue
 import uk.gibby.neo4k.returns.empty.EmptyReturn
+import uk.gibby.neo4k.returns.generic.Nullable
 import uk.gibby.neo4k.returns.graph.entities.DirectionalRelationship
 import uk.gibby.neo4k.returns.graph.entities.Node
 import uk.gibby.neo4k.returns.graph.entities.NonDirectionalRelationship
@@ -161,7 +162,7 @@ class NeoMatchablePath2<A : Node<*>, B : Relationship<*, *, *>, C : Node<*>>(
     val firstToSecondDir: PathDirection,
     val second: Searchable<C>,
     override val ref: String
-) : Matchable<NeoPath2<A, B, C>>, Creatable<NeoPath2<A, B, C>> {
+) : Matchable<NeoPath2<A, B, C>>, Creatable<NeoPath2<A, B, C>>, OptionallyMatchable<NeoPath2<Nullable<>>>{
     override fun getCreateString(): String {
         return "${first.getSearchString()}${if (firstToSecondDir == PathDirection.Backwards) "<-" else "-"}${firstToSecond.getMatchString()}${if (firstToSecondDir != PathDirection.Backwards) "->" else "-"}${second.getSearchString()}"
     }
