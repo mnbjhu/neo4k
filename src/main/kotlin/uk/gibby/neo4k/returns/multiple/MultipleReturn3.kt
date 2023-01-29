@@ -28,7 +28,7 @@ data class MultipleReturn3<a, A: ReturnValue<a>, b, B: ReturnValue<b>, c, C: Ret
                     }
                 }
                 composite.endStructure(descriptor)
-                return Triple(f!!, s!!, t!!)
+                return Triple(f as a, s as b, t as c)
             }
 
             override fun serialize(encoder: Encoder, value: Triple<a, b, c>) {
