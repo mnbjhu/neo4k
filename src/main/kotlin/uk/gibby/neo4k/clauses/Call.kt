@@ -6,7 +6,6 @@ import uk.gibby.neo4k.returns.empty.EmptyReturn
 
 class Call(private val innerQuery: Query<Unit, EmptyReturn, *, *>): Clause(){
     override fun getString(): String {
-        val scope = QueryScope()
-        return "CALL { ${innerQuery.query} }"
+        return "CALL { WITH * ${innerQuery.query} }"
     }
 }

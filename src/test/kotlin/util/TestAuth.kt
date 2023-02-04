@@ -7,10 +7,8 @@ import com.natpryce.konfig.stringType
 
 object TestAuth {
     private val config = try{ ConfigurationProperties.fromResource("local.properties") } catch (e: Exception) { null }
-    private val server_port = Key("server.port", intType)
-    private val server_host = Key("server.host", stringType)
+    private val server_user = Key("server.user", stringType)
     private val server_pass = Key("server.pass", stringType)
-    val host = try{ config?.get(server_host)!! } catch (e: Exception) { "bolt://localhost" }
-    val port = try{ config?.get(server_port)!! } catch (e: Exception) { 6379 }
-    val password = try{ config?.get(server_pass) } catch (e: Exception) { null }
+    val user = try{ config?.get(server_user)!! } catch (e: Exception) { "neo4j" }
+    val password = try{ config?.get(server_pass)!! } catch (e: Exception) { "myPassword123" }
 }
