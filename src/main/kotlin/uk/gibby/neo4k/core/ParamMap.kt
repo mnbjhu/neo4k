@@ -13,7 +13,7 @@ import kotlin.reflect.KType
 
 sealed class ParamMap<out U: Entity<*>>(protected val type: KType){
     val entries: MutableList<Pair<String, String>> = mutableListOf()
-    operator fun <U: ReturnValue<*>>set(attribute: U, value: U){
+    operator fun <T, U: ReturnValue<T>>set(attribute: U, value: U){
         entries.add(attribute.getString() to value.getString())
     }
     operator fun <T, U: ReturnValue<T>>set(attribute: U, value: T){

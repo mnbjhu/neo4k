@@ -7,8 +7,8 @@ abstract class GraphTest {
     protected val graph = Graph(
         name = this::class.qualifiedName!!.replace("_", ".").replace(".", "").lowercase(),
         host = "localhost",
-        username = "neo4j",
-        password = "myPassword123"
+        username = TestAuth.user,
+        password = TestAuth.password
     )
     @BeforeEach
     fun clearGraph(){

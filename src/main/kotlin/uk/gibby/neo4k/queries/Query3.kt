@@ -8,6 +8,7 @@ import uk.gibby.neo4k.returns.multiple.Single
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import uk.gibby.neo4k.core.Graph
 
 fun <
     a, A: Single<a>,
@@ -35,4 +36,8 @@ fun <a, A: Single<a>, b, B: Single<b>, c, C: Single<c>, r, R: ReturnValue<r>>que
 }
 inline fun <a, reified A: Single<a>, b, reified B: Single<b>, c, reified C: Single<c>, r, R: ReturnValue<r>>query3(noinline builder: QueryScope.(A, B, C) -> R): QueryBuilder<Triple<a, b, c>, MultipleReturn3<a, A, b, B, c, C>, r, R>{
     return query(typeOf<A>(), typeOf<B>(), typeOf<C>(), builder)
+}
+fun <a, A: Single<a>, b, B: Single<b>, c, C: Single<c>, r, R: ReturnValue<r>> QueryBuilder<Triple<a, b, c>, MultipleReturn3<a, A, b, B, c, C>, r, R>.build(): Graph.(a, b, c) -> List<r> {
+    val query = _build()
+    return { first, second, third -> query.execute(this, listOf(first, second, third)) as List<r> }
 }

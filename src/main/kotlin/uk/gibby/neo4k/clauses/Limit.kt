@@ -2,6 +2,8 @@ package uk.gibby.neo4k.clauses
 
 import uk.gibby.neo4k.core.QueryScope
 import uk.gibby.neo4k.core.of
+import uk.gibby.neo4k.returns.empty.EmptyReturn
+import uk.gibby.neo4k.returns.empty.EmptyReturnInstance
 import uk.gibby.neo4k.returns.primitives.LongReturn
 
 /**
@@ -19,7 +21,7 @@ class Limit(private val count: LongReturn): Clause(){
         return "LIMIT ${count.getString()}"
     }
     companion object{
-        fun QueryScope.limit(count: LongReturn) = Limit(count).also { addStatementAfterReturn(it) }
-        fun QueryScope.limit(count: Long) = Limit(count).also { addStatementAfterReturn(it) }
+        fun QueryScope.limit(count: LongReturn): EmptyReturn = EmptyReturnInstance.also { addStatementAfterReturn(Limit(count)) }
+        fun QueryScope.limit(count: Long): EmptyReturn = EmptyReturnInstance.also { addStatementAfterReturn(Limit(count)) }
     }
 }
