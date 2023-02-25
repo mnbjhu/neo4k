@@ -21,7 +21,7 @@ class Limit(private val count: LongReturn): Clause(){
         return "LIMIT ${count.getString()}"
     }
     companion object{
-        fun QueryScope.limit(count: LongReturn) = EmptyReturnInstance.also { addStatementAfterReturn(Limit(count)) }
+        fun QueryScope.limit(count: LongReturn): EmptyReturn = EmptyReturnInstance.also { addStatementAfterReturn(Limit(count)) }
         fun QueryScope.limit(count: Long): EmptyReturn = EmptyReturnInstance.also { addStatementAfterReturn(Limit(count)) }
     }
 }

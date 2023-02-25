@@ -87,6 +87,6 @@ class QueryTest: GraphTest() {
     fun threeParamQuery(){
         val myQuery = query(::StringReturn, ::LongReturn, ::LongReturn) { text, bottom, top ->
             EmptyReturnInstance
-        }
+        }.build()
     }
 }
